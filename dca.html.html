@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 26.2.3.2 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="00:00:00"/>
+	<style type="text/css">
+		@page { size: 8.27in 11.69in; margin: 0.79in }
+		p { margin-bottom: 0.1in; line-height: 115%; background: transparent }
+		pre { font-size: 10pt; font-family: "Liberation Mono", monospace; background: transparent }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><pre>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;id&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Kalkulator DCA Portofolio&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+        h2 {
+            text-align: center;
+            color: #1a4a38; /* Warna hijau gelap senada dengan tema visual porto */
+            margin-top: 0;
+        }
+        .input-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        input[type=&quot;number&quot;] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type=&quot;number&quot;]:focus {
+            border-color: #1a4a38;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        th {
+            background-color: #1a4a38;
+            color: white;
+            font-weight: bold;
+        }
+        tr:last-child td {
+            font-weight: bold;
+            border-top: 2px solid #1a4a38;
+            border-bottom: none;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;container&quot;&gt;
+    &lt;h2&gt;Kalkulator Alokasi DCA&lt;/h2&gt;
+    
+    &lt;div class=&quot;input-group&quot;&gt;
+        &lt;label for=&quot;modal&quot;&gt;Total Modal Investasi (Rp):&lt;/label&gt;
+        &lt;input type=&quot;number&quot; id=&quot;modal&quot; placeholder=&quot;Ketik nominal, misal: 1000000&quot; oninput=&quot;hitungAlokasi()&quot;&gt;
+    &lt;/div&gt;
+
+    &lt;table&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Aset&lt;/th&gt;
+                &lt;th class=&quot;text-center&quot;&gt;Porsi&lt;/th&gt;
+                &lt;th class=&quot;text-right&quot;&gt;Alokasi Dana&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+            &lt;tr&gt;
+                &lt;td&gt;VTI&lt;/td&gt;
+                &lt;td class=&quot;text-center&quot;&gt;55%&lt;/td&gt;
+                &lt;td class=&quot;text-right&quot; id=&quot;val-vti&quot;&gt;Rp 0&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;VGT&lt;/td&gt;
+                &lt;td class=&quot;text-center&quot;&gt;15%&lt;/td&gt;
+                &lt;td class=&quot;text-right&quot; id=&quot;val-vgt&quot;&gt;Rp 0&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;BBCA&lt;/td&gt;
+                &lt;td class=&quot;text-center&quot;&gt;15%&lt;/td&gt;
+                &lt;td class=&quot;text-right&quot; id=&quot;val-bbca&quot;&gt;Rp 0&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;VXUS&lt;/td&gt;
+                &lt;td class=&quot;text-center&quot;&gt;10%&lt;/td&gt;
+                &lt;td class=&quot;text-right&quot; id=&quot;val-vxus&quot;&gt;Rp 0&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;BTC&lt;/td&gt;
+                &lt;td class=&quot;text-center&quot;&gt;5%&lt;/td&gt;
+                &lt;td class=&quot;text-right&quot; id=&quot;val-btc&quot;&gt;Rp 0&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;&lt;strong&gt;Total&lt;/strong&gt;&lt;/td&gt;
+                &lt;td class=&quot;text-center&quot;&gt;&lt;strong&gt;100%&lt;/strong&gt;&lt;/td&gt;
+                &lt;td class=&quot;text-right&quot; id=&quot;val-total&quot;&gt;Rp 0&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    function hitungAlokasi() {
+        // Ambil nilai dari input box
+        let modalInput = document.getElementById(&quot;modal&quot;).value;
+        let modal = parseFloat(modalInput);
+
+        // Validasi jika input kosong atau negatif
+        if (isNaN(modal) || modal &lt; 0) {
+            modal = 0;
+        }
+
+        // Variabel porsi porto
+        const porsi = {
+            vti: 0.55,
+            vgt: 0.15,
+            bbca: 0.15,
+            vxus: 0.10,
+            btc: 0.05
+        };
+
+        // Hitung nominal masing-masing aset
+        let danaVTI = modal * porsi.vti;
+        let danaVGT = modal * porsi.vgt;
+        let danaBBCA = modal * porsi.bbca;
+        let danaVXUS = modal * porsi.vxus;
+        let danaBTC = modal * porsi.btc;
+
+        // Format angka ke format mata uang Rupiah
+        const formatRupiah = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+
+        // Tampilkan hasil hitungan ke dalam tabel HTML
+        document.getElementById(&quot;val-vti&quot;).innerText = formatRupiah.format(danaVTI);
+        document.getElementById(&quot;val-vgt&quot;).innerText = formatRupiah.format(danaVGT);
+        document.getElementById(&quot;val-bbca&quot;).innerText = formatRupiah.format(danaBBCA);
+        document.getElementById(&quot;val-vxus&quot;).innerText = formatRupiah.format(danaVXUS);
+        document.getElementById(&quot;val-btc&quot;).innerText = formatRupiah.format(danaBTC);
+        document.getElementById(&quot;val-total&quot;).innerText = formatRupiah.format(modal);
+    }
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+</body>
+</html>
