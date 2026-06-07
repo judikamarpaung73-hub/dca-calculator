@@ -37,7 +37,8 @@
             margin-bottom: 8px;
             color: #2c3e50;
         }
-        input[type="number"] {
+        /* Tipe input diubah ke 'text' agar bisa menerima karakter titik */
+        input[type="text"] {
             width: 100%;
             padding: 12px;
             font-size: 16px;
@@ -47,7 +48,7 @@
             outline: none;
             transition: border-color 0.3s;
         }
-        input[type="number"]:focus {
+        input[type="text"]:focus {
             border-color: #1a4a38;
         }
         table {
@@ -84,7 +85,8 @@
     
     <div class="input-group">
         <label for="modal">Total Modal Investasi (Rp):</label>
-        <input type="number" id="modal" placeholder="Ketik nominal, misal: 1000000" oninput="hitungAlokasi()">
+        <!-- Tipe input menjadi text, fungsi oninput diganti untuk menangani format titik -->
+        <input type="text" id="modal" placeholder="Ketik nominal, misal: 1.000.000" oninput="formatInput(this)">
     </div>
 
     <table>
@@ -97,9 +99,9 @@
         </thead>
         <tbody>
             <tr>
-                <td>VTI</td>
+                <td>VOO</td>
                 <td class="text-center">55%</td>
-                <td class="text-right" id="val-vti">Rp 0</td>
+                <td class="text-right" id="val-voo">Rp 0</td>
             </tr>
             <tr>
                 <td>VGT</td>
@@ -131,28 +133,48 @@
 </div>
 
 <script>
-    function hitungAlokasi() {
-        let modalInput = document.getElementById("modal").value;
-        let modal = parseFloat(modalInput);
+    // Fungsi baru untuk memberikan titik otomatis saat mengetik
+    function formatInput(inputElement) {
+        // Hapus semua karakter selain angka (menghindari huruf dan titik lama)
+        let rawValue = inputElement.value.replace(/[^0-9]/g, '');
 
+        // Jika tidak kosong, format ulang dengan titik (standar id-ID)
+        if (rawValue !== '') {
+            inputElement.value = parseInt(rawValue, 10).toLocaleString('id-ID');
+        } else {
+            inputElement.value = '';
+        }
+
+        // Panggil fungsi perhitungan dengan membawa nilai angka murninya
+        hitungAlokasi(rawValue);
+    }
+
+    // Fungsi kalkulasi menggunakan nilai mentah (tanpa titik)
+    function hitungAlokasi(rawValue) {
+        let modal = parseFloat(rawValue);
+
+        // Validasi jika kosong
         if (isNaN(modal) || modal < 0) {
             modal = 0;
         }
 
+        // Objek porsi, VTI diganti VOO
         const porsi = {
-            vti: 0.55,
+            voo: 0.55,
             vgt: 0.15,
             bbca: 0.15,
             vxus: 0.10,
             btc: 0.05
         };
 
-        let danaVTI = modal * porsi.vti;
+        // Kalkulasi
+        let danaVOO = modal * porsi.voo;
         let danaVGT = modal * porsi.vgt;
         let danaBBCA = modal * porsi.bbca;
         let danaVXUS = modal * porsi.vxus;
         let danaBTC = modal * porsi.btc;
 
+        // Formatter ke mata uang Rupiah
         const formatRupiah = new Intl.NumberFormat('id-ID', {
             style: 'currency',
             currency: 'IDR',
@@ -160,7 +182,8 @@
             maximumFractionDigits: 0
         });
 
-        document.getElementById("val-vti").innerText = formatRupiah.format(danaVTI);
+        // Lempar hasil ke tabel HTML
+        document.getElementById("val-voo").innerText = formatRupiah.format(danaVOO);
         document.getElementById("val-vgt").innerText = formatRupiah.format(danaVGT);
         document.getElementById("val-bbca").innerText = formatRupiah.format(danaBBCA);
         document.getElementById("val-vxus").innerText = formatRupiah.format(danaVXUS);
