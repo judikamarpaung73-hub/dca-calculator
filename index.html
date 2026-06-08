@@ -30,6 +30,13 @@
             text-align: center;
             color: #1a4a38;
             margin-top: 0;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 25px;
         }
         .input-group {
             margin-bottom: 25px;
@@ -68,73 +75,110 @@
             color: white;
             font-weight: bold;
         }
+        /* Efek Hover untuk baris yang bisa diklik */
+        .clickable-row {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .clickable-row:hover {
+            background-color: #e9f2ee;
+        }
+        .clickable-row td:first-child {
+            color: #1a4a38;
+            font-weight: bold;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
         tr:last-child td {
             font-weight: bold;
             border-top: 2px solid #1a4a38;
             border-bottom: none;
             background-color: #f8fbf9;
+            cursor: default;
         }
-        .text-right {
-            text-align: right;
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+
+        /* CSS untuk Pop-up Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
         }
-        .text-center {
-            text-align: center;
+        .modal-content {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            animation: fadeIn 0.2s ease-out;
         }
-        .info-text {
-            font-size: 12px;
-            color: #7f8c8d;
-            text-align: center;
-            margin-top: 15px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        /* CSS Baru untuk Box Proyeksi */
-        .projection-box {
-            background-color: #f8fbf9;
-            border: 1px solid #1a4a38;
-            border-radius: 8px;
-            padding: 18px;
-            margin-top: 25px;
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #bdc3c7;
+            cursor: pointer;
+            transition: color 0.2s;
         }
-        .projection-box h3 {
+        .close-btn:hover { color: #e74c3c; }
+        .modal-title {
             color: #1a4a38;
-            font-size: 16px;
             margin-top: 0;
-            margin-bottom: 15px;
-            text-align: center;
-            border-bottom: 1px solid #dce8e2;
+            margin-bottom: 10px;
+            font-size: 20px;
+            border-bottom: 2px solid #ecf0f1;
             padding-bottom: 10px;
         }
-        .proj-row {
+        .modal-desc {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+        .modal-stats {
+            background-color: #f8fbf9;
+            border: 1px solid #dce8e2;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .stat-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 14px;
-            color: #2c3e50;
         }
-        .proj-val {
-            font-weight: bold;
-        }
-        .text-green {
-            color: #27ae60;
-        }
-        .total-akhir {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed #bdc3c7;
-            font-size: 18px;
-            font-weight: bold;
-            color: #1a4a38;
-        }
+        .stat-row:last-child { margin-bottom: 0; }
+        .stat-label { font-weight: bold; color: #2c3e50; }
+        .stat-value { color: #27ae60; font-weight: bold; }
+
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Kalkulator Alokasi DCA</h2>
+    <div class="subtitle">Ketuk nama aset di tabel untuk melihat detail fundamental</div>
     
     <div class="input-group">
         <label for="modal">Total Modal Investasi (Rp):</label>
-        <input type="text" id="modal" placeholder="Ketik nominal per bulan, misal: 1.000.000" oninput="formatInput(this)">
+        <input type="text" id="modal" placeholder="Ketik nominal, misal: 1.000.000" oninput="formatInput(this)">
     </div>
 
     <table>
@@ -142,112 +186,136 @@
             <tr>
                 <th>Aset</th>
                 <th class="text-center">Porsi</th>
-                <th class="text-center">Hist. CAGR</th>
-                <th class="text-center">Div. Yield</th>
                 <th class="text-right">Alokasi Dana</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
+            <tr class="clickable-row" onclick="openModal('voo')">
                 <td>VOO</td>
                 <td class="text-center">55%</td>
-                <td class="text-center">12.0%</td>
-                <td class="text-center">1.4%</td>
                 <td class="text-right" id="val-voo">Rp 0</td>
             </tr>
-            <tr>
+            <tr class="clickable-row" onclick="openModal('vgt')">
                 <td>VGT</td>
                 <td class="text-center">15%</td>
-                <td class="text-center">19.0%</td>
-                <td class="text-center">0.8%</td>
                 <td class="text-right" id="val-vgt">Rp 0</td>
             </tr>
-            <tr>
+            <tr class="clickable-row" onclick="openModal('bbca')">
                 <td>BBCA</td>
                 <td class="text-center">15%</td>
-                <td class="text-center">13.0%</td>
-                <td class="text-center">2.8%</td>
                 <td class="text-right" id="val-bbca">Rp 0</td>
             </tr>
-            <tr>
+            <tr class="clickable-row" onclick="openModal('vxus')">
                 <td>VXUS</td>
                 <td class="text-center">10%</td>
-                <td class="text-center">5.0%</td>
-                <td class="text-center">3.0%</td>
                 <td class="text-right" id="val-vxus">Rp 0</td>
             </tr>
-            <tr>
+            <tr class="clickable-row" onclick="openModal('btc')">
                 <td>BTC</td>
                 <td class="text-center">5%</td>
-                <td class="text-center">45.0%</td>
-                <td class="text-center">0.0%</td>
                 <td class="text-right" id="val-btc">Rp 0</td>
             </tr>
             <tr>
                 <td><strong>TOTAL</strong></td>
                 <td class="text-center"><strong>100%</strong></td>
-                <td class="text-center"><strong>~14.1%</strong></td>
-                <td class="text-center"><strong>~1.6%</strong></td>
                 <td class="text-right" id="val-total">Rp 0</td>
             </tr>
         </tbody>
     </table>
-    
-    <!-- Fitur Baru: Proyeksi Tahunan -->
-    <div class="projection-box">
-        <h3>Proyeksi 1 Tahun (Jika Rutin DCA Tiap Bulan)</h3>
-        <div class="proj-row">
-            <span>Total Modal Disetor (12x):</span>
-            <span id="proj-modal" class="proj-val">Rp 0</span>
-        </div>
-        <div class="proj-row">
-            <span>Estimasi Pertumbuhan (Capital Gain):</span>
-            <span id="proj-growth" class="proj-val text-green">+Rp 0</span>
-        </div>
-        <div class="proj-row">
-            <span>Estimasi Arus Kas (Dividen):</span>
-            <span id="proj-div" class="proj-val text-green">+Rp 0</span>
-        </div>
-        <div class="proj-row total-akhir">
-            <span>Estimasi Nilai Akhir:</span>
-            <span id="proj-akhir" class="proj-val">Rp 0</span>
-        </div>
-    </div>
+</div>
 
-    <div class="info-text">
-        *Data CAGR dan Dividend Yield adalah estimasi historis. Perhitungan proyeksi menggunakan metode Future Value (Compound Interest).
+<div id="infoModal" class="modal-overlay" onclick="closeOutside(event)">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h3 id="modal-name" class="modal-title">Nama Aset</h3>
+        <div id="modal-desc" class="modal-desc">Deskripsi aset...</div>
+        <div class="modal-stats">
+            <div class="stat-row">
+                <span class="stat-label">Pertumbuhan (CAGR):</span>
+                <span id="modal-cagr" class="stat-value">0% / thn</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Dividen (Yield):</span>
+                <span id="modal-div" class="stat-value">0% / thn</span>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
+    // Database Fundamental Aset
+    const dbAset = {
+        voo: {
+            name: "VOO (Vanguard S&P 500 ETF)",
+            desc: "Keranjang investasi yang melacak 500 perusahaan terbesar dan paling menguntungkan di Amerika Serikat (Apple, Microsoft, Amazon, dll). Berfungsi sebagai fondasi utama portofolio untuk menangkap laju ekonomi global dengan risiko terukur.",
+            cagr: "12.0% / thn",
+            div: "1.4% / thn"
+        },
+        vgt: {
+            name: "VGT (Vanguard Info Tech ETF)",
+            desc: "Fokus eksklusif pada sektor teknologi murni (Software, Cloud, Cybersecurity, Hardware). Menawarkan potensi lonjakan pertumbuhan modal yang agresif, namun dengan tingkat volatilitas yang lebih tajam saat pasar terkoreksi.",
+            cagr: "19.0% / thn",
+            div: "0.8% / thn"
+        },
+        bbca: {
+            name: "BBCA (PT Bank Central Asia Tbk)",
+            desc: "Bank swasta terbesar di Indonesia dengan infrastruktur digital terkuat dan dana murah (CASA) terbesar. Bertindak sebagai 'jangkar lokal' yang memberikan stabilitas, pertumbuhan konsisten, dan efisiensi pajak dari dividen domestik.",
+            cagr: "13.0% / thn",
+            div: "2.8% / thn"
+        },
+        vxus: {
+            name: "VXUS (Vanguard Total Intl ETF)",
+            desc: "Mencakup ribuan perusahaan di seluruh dunia di luar Amerika Serikat (Eropa, Asia Pasifik, Pasar Berkembang). Berfungsi sebagai instrumen diversifikasi geografis jika ekonomi AS sedang mengalami stagnasi.",
+            cagr: "5.0% / thn",
+            div: "3.0% / thn"
+        },
+        btc: {
+            name: "BTC (Bitcoin)",
+            desc: "Aset digital terdesentralisasi dengan suplai absolut yang terbatas. Berfungsi sebagai instrumen berisiko tinggi (High Risk, High Reward) dan pelindung nilai terhadap pencetakan uang tunai (inflasi fiat) yang berlebihan.",
+            cagr: "45.0% / thn",
+            div: "0.0% / thn"
+        }
+    };
+
+    // Fungsi Logika Modal
+    function openModal(asetKey) {
+        const data = dbAset[asetKey];
+        document.getElementById("modal-name").innerText = data.name;
+        document.getElementById("modal-desc").innerText = data.desc;
+        document.getElementById("modal-cagr").innerText = data.cagr;
+        document.getElementById("modal-div").innerText = data.div;
+        
+        document.getElementById("infoModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("infoModal").style.display = "none";
+    }
+
+    function closeOutside(event) {
+        const modal = document.getElementById("infoModal");
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    // Fungsi Logika Kalkulator
     function formatInput(inputElement) {
         let rawValue = inputElement.value.replace(/[^0-9]/g, '');
-
         if (rawValue !== '') {
             inputElement.value = parseInt(rawValue, 10).toLocaleString('id-ID');
         } else {
             inputElement.value = '';
         }
-
         hitungAlokasi(rawValue);
     }
 
     function hitungAlokasi(rawValue) {
         let modal = parseFloat(rawValue);
+        if (isNaN(modal) || modal < 0) { modal = 0; }
 
-        if (isNaN(modal) || modal < 0) {
-            modal = 0;
-        }
+        const porsi = { voo: 0.55, vgt: 0.15, bbca: 0.15, vxus: 0.10, btc: 0.05 };
 
-        const porsi = {
-            voo: 0.55,
-            vgt: 0.15,
-            bbca: 0.15,
-            vxus: 0.10,
-            btc: 0.05
-        };
-
-        // Alokasi Tabel
         let danaVOO = modal * porsi.voo;
         let danaVGT = modal * porsi.vgt;
         let danaBBCA = modal * porsi.bbca;
@@ -255,10 +323,7 @@
         let danaBTC = modal * porsi.btc;
 
         const formatRupiah = new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
+            style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
         });
 
         document.getElementById("val-voo").innerText = formatRupiah.format(danaVOO);
@@ -267,31 +332,6 @@
         document.getElementById("val-vxus").innerText = formatRupiah.format(danaVXUS);
         document.getElementById("val-btc").innerText = formatRupiah.format(danaBTC);
         document.getElementById("val-total").innerText = formatRupiah.format(modal);
-
-        // Algoritma Proyeksi 1 Tahun
-        let totalDisetor = modal * 12;
-
-        // Rumus Future Value Bunga Majemuk: PMT * [((1 + r)^n - 1) / r] * (1+r)
-        let r_cagr = 0.141 / 12; // Bunga bulanan (14.1% dibagi 12)
-        let n = 12; // 12 bulan
-        
-        let nilaiAkhir = 0;
-        if(modal > 0) {
-            nilaiAkhir = modal * ((Math.pow(1 + r_cagr, n) - 1) / r_cagr) * (1 + r_cagr);
-        }
-        
-        let keuntunganCapital = nilaiAkhir - totalDisetor;
-        
-        // Estimasi dividen (dibagi 2 karena modal disetor bertahap setiap bulan)
-        let estimasiDiv = totalDisetor * (0.016 / 2); 
-        
-        let totalAkhirSemua = nilaiAkhir + estimasiDiv;
-
-        // Update UI Proyeksi
-        document.getElementById("proj-modal").innerText = formatRupiah.format(totalDisetor);
-        document.getElementById("proj-growth").innerText = "+" + formatRupiah.format(keuntunganCapital);
-        document.getElementById("proj-div").innerText = "+" + formatRupiah.format(estimasiDiv);
-        document.getElementById("proj-akhir").innerText = formatRupiah.format(totalAkhirSemua);
     }
 </script>
 
