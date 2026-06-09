@@ -23,7 +23,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 900px; /* Diperlebar agar muat semua kolom analitis */
+            max-width: 900px;
             overflow-x: auto;
         }
         h2 {
@@ -207,19 +207,11 @@
             </tr>
             <tr class="clickable-row" onclick="openModal('vgt')">
                 <td>VGT</td>
-                <td class="text-center">10%</td>
+                <td class="text-center">15%</td>
                 <td class="text-right" id="val-vgt-m">Rp 0</td>
                 <td class="text-right" id="val-vgt-y">Rp 0</td>
                 <td class="text-right text-green" id="gain-vgt-cagr">+Rp 0</td>
                 <td class="text-right text-green" id="gain-vgt-div">+Rp 0</td>
-            </tr>
-            <tr class="clickable-row" onclick="openModal('smh')">
-                <td>SMH</td>
-                <td class="text-center">5%</td>
-                <td class="text-right" id="val-smh-m">Rp 0</td>
-                <td class="text-right" id="val-smh-y">Rp 0</td>
-                <td class="text-right text-green" id="gain-smh-cagr">+Rp 0</td>
-                <td class="text-right text-green" id="gain-smh-div">+Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('bbca')">
                 <td>BBCA</td>
@@ -276,44 +268,12 @@
 </div>
 
 <script>
-    // Database Parameter Fundamental
     const dbAset = {
-        voo: {
-            name: "VOO (Vanguard S&P 500 ETF)",
-            desc: "Melacak 500 perusahaan raksasa paling menguntungkan di AS. Fondasi utama penopang seluruh portofolio.",
-            cagr: 0.120, // 12%
-            div: 0.014   // 1.4%
-        },
-        vgt: {
-            name: "VGT (Vanguard Info Tech ETF)",
-            desc: "Fokus pada ekosistem teknologi makro global (Software & Hardware konsumen seperti Microsoft dan Apple).",
-            cagr: 0.190, // 19%
-            div: 0.008   // 0.8%
-        },
-        smh: {
-            name: "SMH (VanEck Semiconductor ETF)",
-            desc: "Sektor hulu teknologi: produsen dan perancang cip semikonduktor dunia (Nvidia, TSMC, ASML).",
-            cagr: 0.245, // 24.5%
-            div: 0.004   // 0.4%
-        },
-        bbca: {
-            name: "BBCA (PT Bank Central Asia Tbk)",
-            desc: "Jangkar pasar keuangan lokal Indonesia. Memberikan stabilitas fundamental kuat dan arus kas dividen domestik.",
-            cagr: 0.130, // 13%
-            div: 0.028   // 2.8%
-        },
-        vxus: {
-            name: "VXUS (Vanguard Total Intl ETF)",
-            desc: "Diversifikasi geografis total yang mencakup seluruh pasar saham di luar yurisdiksi Amerika Serikat.",
-            cagr: 0.050, // 5%
-            div: 0.030   // 3%
-        },
-        btc: {
-            name: "BTC (Bitcoin)",
-            desc: "Aset kripto desentralisasi suplai terbatas. Berperan sebagai instrumen High-Risk High-Reward.",
-            cagr: 0.450, // 45%
-            div: 0.000   // 0%
-        }
+        voo: { name: "VOO (Vanguard S&P 500 ETF)", desc: "Melacak 500 perusahaan raksasa paling menguntungkan di AS. Fondasi utama penopang seluruh portofolio.", cagr: 0.120, div: 0.014 },
+        vgt: { name: "VGT (Vanguard Info Tech ETF)", desc: "Fokus pada ekosistem teknologi makro global (Software & Hardware konsumen seperti Microsoft dan Apple).", cagr: 0.190, div: 0.008 },
+        bbca: { name: "BBCA (PT Bank Central Asia Tbk)", desc: "Jangkar pasar keuangan lokal Indonesia. Memberikan stabilitas fundamental kuat dan arus kas dividen domestik.", cagr: 0.130, div: 0.028 },
+        vxus: { name: "VXUS (Vanguard Total Intl ETF)", desc: "Diversifikasi geografis total yang mencakup seluruh pasar saham di luar yurisdiksi Amerika Serikat.", cagr: 0.050, div: 0.030 },
+        btc: { name: "BTC (Bitcoin)", desc: "Aset kripto desentralisasi suplai terbatas. Berperan sebagai instrumen High-Risk High-Reward.", cagr: 0.450, div: 0.000 }
     };
 
     function openModal(asetKey) {
@@ -342,21 +302,16 @@
         let modal = parseFloat(rawValue);
         if (isNaN(modal) || modal < 0) { modal = 0; }
 
-        const porsi = { voo: 0.55, vgt: 0.10, smh: 0.05, bbca: 0.15, vxus: 0.10, btc: 0.05 };
-
-        const formatRupiah = new Intl.NumberFormat('id-ID', {
-            style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
-        });
+        const porsi = { voo: 0.55, vgt: 0.15, bbca: 0.15, vxus: 0.10, btc: 0.05 };
+        const formatRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
         let totalGainCAGR = 0;
         let totalGainDiv = 0;
 
-        // Loop Algoritma Kalkulasi Berdasarkan Parameter Aset
         const kalkulasiAset = (idKey, porsiValue) => {
             let danaBulan = modal * porsiValue;
             let danaTahun = danaBulan * 12;
             
-            // Rumus Future Value (CAGR)
             let r_bulanan = dbAset[idKey].cagr / 12;
             let fv = 0;
             if (danaBulan > 0 && r_bulanan > 0) {
@@ -365,14 +320,11 @@
                 fv = danaTahun;
             }
             let profitCAGR = fv - danaTahun;
-            
-            // Rumus Estimasi Dividen Tertimbang Masa Simpan DCA (Yield / 2)
             let profitDiv = danaTahun * (dbAset[idKey].div / 2);
 
             totalGainCAGR += profitCAGR;
             totalGainDiv += profitDiv;
 
-            // Render ke UI Tabel
             document.getElementById(`val-${idKey}-m`).innerText = formatRupiah.format(danaBulan);
             document.getElementById(`val-${idKey}-y`).innerText = formatRupiah.format(danaTahun);
             document.getElementById(`gain-${idKey}-cagr`).innerText = "+" + formatRupiah.format(profitCAGR);
@@ -381,18 +333,15 @@
 
         kalkulasiAset('voo', porsi.voo);
         kalkulasiAset('vgt', porsi.vgt);
-        kalkulasiAset('smh', porsi.smh);
         kalkulasiAset('bbca', porsi.bbca);
         kalkulasiAset('vxus', porsi.vxus);
         kalkulasiAset('btc', porsi.btc);
 
-        // Render Baris Total Akhir
         document.getElementById("val-total-m").innerText = formatRupiah.format(modal);
         document.getElementById("val-total-y").innerText = formatRupiah.format(modal * 12);
         document.getElementById("gain-total-cagr").innerText = "+" + formatRupiah.format(totalGainCAGR);
         document.getElementById("gain-total-div").innerText = "+" + formatRupiah.format(totalGainDiv);
     }
 </script>
-
 </body>
 </html>
