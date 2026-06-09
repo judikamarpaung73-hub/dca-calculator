@@ -23,7 +23,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 700px; /* Diperlebar sedikit agar muat kolom tahunan */
+            max-width: 900px; /* Diperlebar agar muat semua kolom analitis */
             overflow-x: auto;
         }
         h2 {
@@ -69,6 +69,7 @@
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ecf0f1;
+            font-size: 14px;
         }
         th {
             background-color: #1a4a38;
@@ -97,6 +98,7 @@
         }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
+        .text-green { color: #27ae60; }
 
         /* Modal Overlay */
         .modal-overlay {
@@ -185,10 +187,13 @@
                 <th rowspan="2" style="vertical-align: middle;">Aset</th>
                 <th rowspan="2" class="text-center" style="vertical-align: middle;">Porsi</th>
                 <th colspan="2" class="text-center" style="border-bottom: 1px solid rgba(255,255,255,0.3);">Alokasi Dana</th>
+                <th colspan="2" class="text-center" style="border-bottom: 1px solid rgba(255,255,255,0.3); background-color: #163e2f;">Estimasi Hasil (Thn 1)</th>
             </tr>
             <tr>
                 <th class="text-right">Per Bulan</th>
                 <th class="text-right">Per Tahun (12x)</th>
+                <th class="text-right" style="background-color: #1d4d3b;">Profit CAGR</th>
+                <th class="text-right" style="background-color: #1d4d3b;">Yield Dividen</th>
             </tr>
         </thead>
         <tbody>
@@ -196,49 +201,62 @@
                 <td>VOO</td>
                 <td class="text-center">55%</td>
                 <td class="text-right" id="val-voo-m">Rp 0</td>
-                <td class="text-right" id="val-voo-y" style="color: #2c3e50;">Rp 0</td>
+                <td class="text-right" id="val-voo-y">Rp 0</td>
+                <td class="text-right text-green" id="gain-voo-cagr">+Rp 0</td>
+                <td class="text-right text-green" id="gain-voo-div">+Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('vgt')">
                 <td>VGT</td>
                 <td class="text-center">10%</td>
                 <td class="text-right" id="val-vgt-m">Rp 0</td>
-                <td class="text-right" id="val-vgt-y" style="color: #2c3e50;">Rp 0</td>
+                <td class="text-right" id="val-vgt-y">Rp 0</td>
+                <td class="text-right text-green" id="gain-vgt-cagr">+Rp 0</td>
+                <td class="text-right text-green" id="gain-vgt-div">+Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('smh')">
                 <td>SMH</td>
                 <td class="text-center">5%</td>
                 <td class="text-right" id="val-smh-m">Rp 0</td>
-                <td class="text-right" id="val-smh-y" style="color: #2c3e50;">Rp 0</td>
+                <td class="text-right" id="val-smh-y">Rp 0</td>
+                <td class="text-right text-green" id="gain-smh-cagr">+Rp 0</td>
+                <td class="text-right text-green" id="gain-smh-div">+Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('bbca')">
                 <td>BBCA</td>
                 <td class="text-center">15%</td>
                 <td class="text-right" id="val-bbca-m">Rp 0</td>
-                <td class="text-right" id="val-bbca-y" style="color: #2c3e50;">Rp 0</td>
+                <td class="text-right" id="val-bbca-y">Rp 0</td>
+                <td class="text-right text-green" id="gain-bbca-cagr">+Rp 0</td>
+                <td class="text-right text-green" id="gain-bbca-div">+Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('vxus')">
                 <td>VXUS</td>
                 <td class="text-center">10%</td>
                 <td class="text-right" id="val-vxus-m">Rp 0</td>
-                <td class="text-right" id="val-vxus-y" style="color: #2c3e50;">Rp 0</td>
+                <td class="text-right" id="val-vxus-y">Rp 0</td>
+                <td class="text-right text-green" id="gain-vxus-cagr">+Rp 0</td>
+                <td class="text-right text-green" id="gain-vxus-div">+Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('btc')">
                 <td>BTC</td>
                 <td class="text-center">5%</td>
                 <td class="text-right" id="val-btc-m">Rp 0</td>
-                <td class="text-right" id="val-btc-y" style="color: #2c3e50;">Rp 0</td>
+                <td class="text-right" id="val-btc-y">Rp 0</td>
+                <td class="text-right text-green" id="gain-btc-cagr">+Rp 0</td>
+                <td class="text-right text-green" id="gain-btc-div">Rp 0</td>
             </tr>
             <tr>
                 <td><strong>TOTAL</strong></td>
                 <td class="text-center"><strong>100%</strong></td>
                 <td class="text-right" id="val-total-m">Rp 0</td>
                 <td class="text-right" id="val-total-y">Rp 0</td>
+                <td class="text-right text-green" id="gain-total-cagr">+Rp 0</td>
+                <td class="text-right text-green" id="gain-total-div">+Rp 0</td>
             </tr>
         </tbody>
     </table>
 </div>
 
-<!-- Pop-up Modal -->
 <div id="infoModal" class="modal-overlay" onclick="closeOutside(event)">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -258,43 +276,43 @@
 </div>
 
 <script>
-    // Database Fundamental Aktual
+    // Database Parameter Fundamental
     const dbAset = {
         voo: {
             name: "VOO (Vanguard S&P 500 ETF)",
-            desc: "Melacak 500 perusahaan raksasa paling menguntungkan di Amerika Serikat. Berfungsi sebagai fondasi utama penopang seluruh portofolio.",
-            cagr: "12.0% / thn",
-            div: "1.4% / thn"
+            desc: "Melacak 500 perusahaan raksasa paling menguntungkan di AS. Fondasi utama penopang seluruh portofolio.",
+            cagr: 0.120, // 12%
+            div: 0.014   // 1.4%
         },
         vgt: {
             name: "VGT (Vanguard Info Tech ETF)",
-            desc: "Fokus pada ekosistem teknologi makro global (terutama sektor software seperti Microsoft dan hardware konsumen seperti Apple).",
-            cagr: "19.0% / thn",
-            div: "0.8% / thn"
+            desc: "Fokus pada ekosistem teknologi makro global (Software & Hardware konsumen seperti Microsoft dan Apple).",
+            cagr: 0.190, // 19%
+            div: 0.008   // 0.8%
         },
         smh: {
             name: "SMH (VanEck Semiconductor ETF)",
-            desc: "Fokus super-agresif pada industri hulu teknologi, yaitu produsen dan perancang cip semikonduktor dunia (Nvidia, TSMC, ASML). Sangat volatil namun pertumbuhan historisnya sangat tinggi.",
-            cagr: "24.5% / thn",
-            div: "0.4% / thn"
+            desc: "Sektor hulu teknologi: produsen dan perancang cip semikonduktor dunia (Nvidia, TSMC, ASML).",
+            cagr: 0.245, // 24.5%
+            div: 0.004   // 0.4%
         },
         bbca: {
             name: "BBCA (PT Bank Central Asia Tbk)",
-            desc: "Jangkar pasar keuangan lokal Indonesia. Memberikan stabilitas fundamental yang kuat, pertumbuhan laba konsisten, dan arus kas dividen domestik.",
-            cagr: "13.0% / thn",
-            div: "2.8% / thn"
+            desc: "Jangkar pasar keuangan lokal Indonesia. Memberikan stabilitas fundamental kuat dan arus kas dividen domestik.",
+            cagr: 0.130, // 13%
+            div: 0.028   // 2.8%
         },
         vxus: {
             name: "VXUS (Vanguard Total Intl ETF)",
-            desc: "Diversifikasi geografis total yang mencakup seluruh pasar saham di luar yurisdiksi Amerika Serikat (Eropa, Jepang, Asia Pasifik).",
-            cagr: "5.0% / thn",
-            div: "3.0% / thn"
+            desc: "Diversifikasi geografis total yang mencakup seluruh pasar saham di luar yurisdiksi Amerika Serikat.",
+            cagr: 0.050, // 5%
+            div: 0.030   // 3%
         },
         btc: {
             name: "BTC (Bitcoin)",
-            desc: "Aset kripto desentralisasi dengan suplai terbatas. Berperan sebagai instrumen High-Risk High-Reward untuk perlindungan inflasi mata uang fiat.",
-            cagr: "45.0% / thn",
-            div: "0.0% / thn"
+            desc: "Aset kripto desentralisasi suplai terbatas. Berperan sebagai instrumen High-Risk High-Reward.",
+            cagr: 0.450, // 45%
+            div: 0.000   // 0%
         }
     };
 
@@ -302,8 +320,8 @@
         const data = dbAset[asetKey];
         document.getElementById("modal-name").innerText = data.name;
         document.getElementById("modal-desc").innerText = data.desc;
-        document.getElementById("modal-cagr").innerText = data.cagr;
-        document.getElementById("modal-div").innerText = data.div;
+        document.getElementById("modal-cagr").innerText = (data.cagr * 100).toFixed(1) + "% / thn";
+        document.getElementById("modal-div").innerText = (data.div * 100).toFixed(1) + "% / thn";
         document.getElementById("infoModal").style.display = "flex";
     }
 
@@ -330,24 +348,49 @@
             style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
         });
 
-        // Hitung Fungsi Alokasi (Bulan vs Tahun)
-        const updateRow = (idKey, porsiValue) => {
+        let totalGainCAGR = 0;
+        let totalGainDiv = 0;
+
+        // Loop Algoritma Kalkulasi Berdasarkan Parameter Aset
+        const kalkulasiAset = (idKey, porsiValue) => {
             let danaBulan = modal * porsiValue;
             let danaTahun = danaBulan * 12;
+            
+            // Rumus Future Value (CAGR)
+            let r_bulanan = dbAset[idKey].cagr / 12;
+            let fv = 0;
+            if (danaBulan > 0 && r_bulanan > 0) {
+                fv = danaBulan * ((Math.pow(1 + r_bulanan, 12) - 1) / r_bulanan);
+            } else {
+                fv = danaTahun;
+            }
+            let profitCAGR = fv - danaTahun;
+            
+            // Rumus Estimasi Dividen Tertimbang Masa Simpan DCA (Yield / 2)
+            let profitDiv = danaTahun * (dbAset[idKey].div / 2);
+
+            totalGainCAGR += profitCAGR;
+            totalGainDiv += profitDiv;
+
+            // Render ke UI Tabel
             document.getElementById(`val-${idKey}-m`).innerText = formatRupiah.format(danaBulan);
             document.getElementById(`val-${idKey}-y`).innerText = formatRupiah.format(danaTahun);
+            document.getElementById(`gain-${idKey}-cagr`).innerText = "+" + formatRupiah.format(profitCAGR);
+            document.getElementById(`gain-${idKey}-div`).innerText = dbAset[idKey].div > 0 ? "+" + formatRupiah.format(profitDiv) : "Rp 0";
         };
 
-        updateRow('voo', porsi.voo);
-        updateRow('vgt', porsi.vgt);
-        updateRow('smh', porsi.smh);
-        updateRow('bbca', porsi.bbca);
-        updateRow('vxus', porsi.vxus);
-        updateRow('btc', porsi.btc);
+        kalkulasiAset('voo', porsi.voo);
+        kalkulasiAset('vgt', porsi.vgt);
+        kalkulasiAset('smh', porsi.smh);
+        kalkulasiAset('bbca', porsi.bbca);
+        kalkulasiAset('vxus', porsi.vxus);
+        kalkulasiAset('btc', porsi.btc);
 
-        // Update Baris Total
+        // Render Baris Total Akhir
         document.getElementById("val-total-m").innerText = formatRupiah.format(modal);
         document.getElementById("val-total-y").innerText = formatRupiah.format(modal * 12);
+        document.getElementById("gain-total-cagr").innerText = "+" + formatRupiah.format(totalGainCAGR);
+        document.getElementById("gain-total-div").innerText = "+" + formatRupiah.format(totalGainDiv);
     }
 </script>
 
