@@ -23,7 +23,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 650px;
+            max-width: 700px; /* Diperlebar sedikit agar muat kolom tahunan */
             overflow-x: auto;
         }
         h2 {
@@ -175,58 +175,70 @@
     <div class="subtitle">Ketuk nama aset di tabel untuk melihat detail fundamental</div>
     
     <div class="input-group">
-        <label for="modal">Total Modal Investasi (Rp):</label>
+        <label for="modal">Total Modal Investasi Bulanan (Rp):</label>
         <input type="text" id="modal" placeholder="Ketik nominal, misal: 1.000.000" oninput="formatInput(this)">
     </div>
 
     <table>
         <thead>
             <tr>
-                <th>Aset</th>
-                <th class="text-center">Porsi</th>
-                <th class="text-right">Alokasi Dana</th>
+                <th rowspan="2" style="vertical-align: middle;">Aset</th>
+                <th rowspan="2" class="text-center" style="vertical-align: middle;">Porsi</th>
+                <th colspan="2" class="text-center" style="border-bottom: 1px solid rgba(255,255,255,0.3);">Alokasi Dana</th>
+            </tr>
+            <tr>
+                <th class="text-right">Per Bulan</th>
+                <th class="text-right">Per Tahun (12x)</th>
             </tr>
         </thead>
         <tbody>
             <tr class="clickable-row" onclick="openModal('voo')">
                 <td>VOO</td>
                 <td class="text-center">55%</td>
-                <td class="text-right" id="val-voo">Rp 0</td>
+                <td class="text-right" id="val-voo-m">Rp 0</td>
+                <td class="text-right" id="val-voo-y" style="color: #2c3e50;">Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('vgt')">
                 <td>VGT</td>
                 <td class="text-center">10%</td>
-                <td class="text-right" id="val-vgt">Rp 0</td>
+                <td class="text-right" id="val-vgt-m">Rp 0</td>
+                <td class="text-right" id="val-vgt-y" style="color: #2c3e50;">Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('smh')">
                 <td>SMH</td>
                 <td class="text-center">5%</td>
-                <td class="text-right" id="val-smh">Rp 0</td>
+                <td class="text-right" id="val-smh-m">Rp 0</td>
+                <td class="text-right" id="val-smh-y" style="color: #2c3e50;">Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('bbca')">
                 <td>BBCA</td>
                 <td class="text-center">15%</td>
-                <td class="text-right" id="val-bbca">Rp 0</td>
+                <td class="text-right" id="val-bbca-m">Rp 0</td>
+                <td class="text-right" id="val-bbca-y" style="color: #2c3e50;">Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('vxus')">
                 <td>VXUS</td>
                 <td class="text-center">10%</td>
-                <td class="text-right" id="val-vxus">Rp 0</td>
+                <td class="text-right" id="val-vxus-m">Rp 0</td>
+                <td class="text-right" id="val-vxus-y" style="color: #2c3e50;">Rp 0</td>
             </tr>
             <tr class="clickable-row" onclick="openModal('btc')">
                 <td>BTC</td>
                 <td class="text-center">5%</td>
-                <td class="text-right" id="val-btc">Rp 0</td>
+                <td class="text-right" id="val-btc-m">Rp 0</td>
+                <td class="text-right" id="val-btc-y" style="color: #2c3e50;">Rp 0</td>
             </tr>
             <tr>
                 <td><strong>TOTAL</strong></td>
                 <td class="text-center"><strong>100%</strong></td>
-                <td class="text-right" id="val-total">Rp 0</td>
+                <td class="text-right" id="val-total-m">Rp 0</td>
+                <td class="text-right" id="val-total-y">Rp 0</td>
             </tr>
         </tbody>
     </table>
 </div>
 
+<!-- Pop-up Modal -->
 <div id="infoModal" class="modal-overlay" onclick="closeOutside(event)">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -312,20 +324,30 @@
         let modal = parseFloat(rawValue);
         if (isNaN(modal) || modal < 0) { modal = 0; }
 
-        // Konfigurasi Porsi Baru (Total 100%)
         const porsi = { voo: 0.55, vgt: 0.10, smh: 0.05, bbca: 0.15, vxus: 0.10, btc: 0.05 };
 
         const formatRupiah = new Intl.NumberFormat('id-ID', {
             style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
         });
 
-        document.getElementById("val-voo").innerText = formatRupiah.format(modal * porsi.voo);
-        document.getElementById("val-vgt").innerText = formatRupiah.format(modal * porsi.vgt);
-        document.getElementById("val-smh").innerText = formatRupiah.format(modal * porsi.smh);
-        document.getElementById("val-bbca").innerText = formatRupiah.format(modal * porsi.bbca);
-        document.getElementById("val-vxus").innerText = formatRupiah.format(modal * porsi.vxus);
-        document.getElementById("val-btc").innerText = formatRupiah.format(modal * porsi.btc);
-        document.getElementById("val-total").innerText = formatRupiah.format(modal);
+        // Hitung Fungsi Alokasi (Bulan vs Tahun)
+        const updateRow = (idKey, porsiValue) => {
+            let danaBulan = modal * porsiValue;
+            let danaTahun = danaBulan * 12;
+            document.getElementById(`val-${idKey}-m`).innerText = formatRupiah.format(danaBulan);
+            document.getElementById(`val-${idKey}-y`).innerText = formatRupiah.format(danaTahun);
+        };
+
+        updateRow('voo', porsi.voo);
+        updateRow('vgt', porsi.vgt);
+        updateRow('smh', porsi.smh);
+        updateRow('bbca', porsi.bbca);
+        updateRow('vxus', porsi.vxus);
+        updateRow('btc', porsi.btc);
+
+        // Update Baris Total
+        document.getElementById("val-total-m").innerText = formatRupiah.format(modal);
+        document.getElementById("val-total-y").innerText = formatRupiah.format(modal * 12);
     }
 </script>
 
