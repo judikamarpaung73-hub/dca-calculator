@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCA Portfolio Planner Pro</title>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: rgba(16, 24, 48, 0.88);
+            --panel-soft: rgba(22, 33, 66, 0.72);
+            --border: rgba(148, 163, 184, 0.18);
+            --text: #e5eefb;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-2: #22c55e;
+            --accent-3: #f59e0b;
+            --danger: #fb7185;
+            --shadow: 0 24px 60px rgba(2, 6, 23, 0.45);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 24%),
+                radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 20%),
+                linear-gradient(180deg, #0b1020 0%, #101935 52%, #09101d 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            width: min(1180px, calc(100% - 32px));
+            margin: 32px auto 56px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.25fr 0.95fr;
+            gap: 22px;
+            margin-bottom: 22px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(16px);
+        }
+
+        .hero-card,
+        .summary-card,
+        .table-panel,
+        .history-panel,
+        .asset-panel {
+            padding: 24px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin: 0;
+        }
+
+        .hero-title {
+            font-size: clamp(30px, 5vw, 44px);
+            line-height: 1.05;
+            margin-bottom: 10px;
+        }
+
+        .hero-subtitle {
+            color: var(--muted);
+            line-height: 1.6;
+            max-width: 62ch;
+            margin-bottom: 22px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .hero-metric {
+            padding: 16px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.6));
+            border: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        .hero-metric span {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .hero-metric strong {
+            font-size: 20px;
+        }
+
+        .control-card {
+            display: grid;
+            gap: 16px;
+            align-content: start;
+        }
+
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .save-indicator {
+            font-size: 12px;
+            color: var(--muted);
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text);
+            padding: 14px 16px;
+            font: inherit;
+            outline: none;
+            transition: 0.2s ease;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 92px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: rgba(56, 189, 248, 0.7);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12);
+        }
+
+        .helper {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        button,
+        .ghost-button {
+            border: 0;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font: inherit;
+            cursor: pointer;
+            transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+        }
+
+        button:hover,
+        .ghost-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: white;
+            font-weight: 700;
+        }
+
+        .secondary-btn {
+            background: rgba(34, 197, 94, 0.18);
+            color: #d1fae5;
+            border: 1px solid rgba(34, 197, 94, 0.24);
+        }
+
+        .neutral-btn {
+            background: rgba(148, 163, 184, 0.12);
+            color: var(--text);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+        }
+
+        .danger-btn {
+            background: rgba(251, 113, 133, 0.12);
+            color: #ffd6de;
+            border: 1px solid rgba(251, 113, 133, 0.2);
+        }
+
+        .chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip {
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            background: rgba(15, 23, 42, 0.72);
+            color: #dce7f6;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .summary-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::after {
+            content: "";
+            position: absolute;
+            inset: auto -30px -30px auto;
+            width: 110px;
+            height: 110px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.18), transparent 60%);
+        }
+
+        .summary-label {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: clamp(24px, 3vw, 30px);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .summary-note {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1.55fr 0.95fr;
+            gap: 22px;
+            margin-bottom: 22px;
+        }
+
+        .analysis-section {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 22px;
+            margin-bottom: 22px;
+        }
+
+        .table-header,
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .section-header p,
+        .table-header p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            font-size: 14px;
+        }
+
+        th {
+            color: #cbd5e1;
+            font-weight: 700;
+            background: rgba(15, 23, 42, 0.72);
+        }
+
+        tbody tr:hover {
+            background: rgba(15, 23, 42, 0.48);
+        }
+
+        tbody tr.total-row {
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .asset-trigger {
+            color: #bfe8ff;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .gain {
+            color: #86efac;
+            font-weight: 700;
+        }
+
+        .loss {
+            color: #fda4af;
+        }
+
+        .allocation-list {
+            display: grid;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .allocation-item {
+            padding: 14px;
+            border-radius: 18px;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .allocation-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .bar {
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.1);
+            overflow: hidden;
+        }
+
+        .bar > span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--accent), #8b5cf6);
+        }
+
+        .mini-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .mini-card {
+            padding: 14px;
+            border-radius: 18px;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .mini-card span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .mini-card strong {
+            font-size: 18px;
+        }
+
+        .history-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 22px;
+        }
+
+        .history-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .history-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .history-item {
+            padding: 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            background: rgba(15, 23, 42, 0.72);
+            display: grid;
+            gap: 12px;
+        }
+
+        .history-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .history-meta strong {
+            font-size: 18px;
+        }
+
+        .history-date {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .history-note {
+            color: #d8e3f3;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .history-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .history-empty {
+            padding: 20px;
+            border-radius: 18px;
+            border: 1px dashed rgba(148, 163, 184, 0.2);
+            color: var(--muted);
+            text-align: center;
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        .insight-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .insight-item {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        .insight-item strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .insight-item p {
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .return-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .return-card {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .return-card span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .return-card strong {
+            font-size: 22px;
+        }
+
+        .positive {
+            color: #86efac;
+        }
+
+        .negative {
+            color: #fda4af;
+        }
+
+        .footer-note {
+            margin-top: 22px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 30;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            width: min(520px, 100%);
+            background: #0f172a;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-close {
+            float: right;
+            background: transparent;
+            color: #cbd5e1;
+            font-size: 24px;
+            padding: 0;
+        }
+
+        .modal-card h3 {
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+
+        .modal-card p {
+            color: #cbd5e1;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        .modal-stats {
+            display: grid;
+            gap: 12px;
+        }
+
+        .modal-stat {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 14px;
+            padding: 14px 16px;
+        }
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: rgba(15, 23, 42, 0.95);
+            color: white;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(14px);
+            transition: 0.25s ease;
+            z-index: 40;
+        }
+
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 980px) {
+            .hero,
+            .two-column,
+            .analysis-section,
+            .history-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .history-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .wrapper {
+                width: min(100% - 20px, 1180px);
+                margin-top: 18px;
+            }
+
+            .hero-grid,
+            .form-grid,
+            .summary-grid,
+            .mini-grid,
+            .return-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-card,
+            .summary-card,
+            .table-panel,
+            .history-panel,
+            .asset-panel {
+                padding: 18px;
+            }
+
+            .history-meta {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .actions,
+            .history-actions,
+            .chip-row {
+                flex-direction: column;
+            }
+
+            button,
+            .chip {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <section class="hero">
+            <div class="panel hero-card">
+                <div class="eyebrow">DCA Portfolio Planner</div>
+                <h1 class="hero-title">Kalkulator DCA yang lebih advance, rapi, dan punya histori modal.</h1>
+                <p class="hero-subtitle">
+                    Website ini menghitung alokasi bulanan, proyeksi pertumbuhan berdasarkan CAGR,
+                    estimasi dividen tahun pertama, serta menyimpan modal terakhir dan riwayat snapshot
+                    langsung di browser Anda menggunakan <code>localStorage</code>.
+                </p>
+                <div class="hero-grid">
+                    <div class="hero-metric">
+                        <span>Auto save</span>
+                        <strong>Aktif</strong>
+                    </div>
+                    <div class="hero-metric">
+                        <span>Maks histori</span>
+                        <strong>15 entri</strong>
+                    </div>
+                    <div class="hero-metric">
+                        <span>Mode data</span>
+                        <strong>Lokal</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel control-card hero-card">
+                <div class="control-header">
+                    <div>
+                        <div class="eyebrow">Input Planner</div>
+                        <h2>Atur simulasi</h2>
+                    </div>
+                    <div id="saveIndicator" class="save-indicator">Belum ada data tersimpan</div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="investmentMode">Metode investasi</label>
+                        <select id="investmentMode">
+                            <option value="dca">DCA bulanan</option>
+                            <option value="lumpSum">Satu kali invest</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="periodYears">Periode</label>
+                        <select id="periodYears">
+                            <option value="1">1 tahun</option>
+                            <option value="3">3 tahun</option>
+                            <option value="5">5 tahun</option>
+                            <option value="10">10 tahun</option>
+                        </select>
+                    </div>
+
+                    <div class="field full">
+                        <label id="capitalInputLabel" for="monthlyCapital">Modal investasi bulanan</label>
+                        <input type="text" id="monthlyCapital" placeholder="Contoh: 1.000.000">
+                        <div id="capitalInputHelper" class="helper">Nilai terakhir tersimpan otomatis di browser Anda.</div>
+                    </div>
+
+                    <div class="field full">
+                        <label for="historyTag">Label histori</label>
+                        <input type="text" id="historyTag" maxlength="50" placeholder="Contoh: Gajian Juni">
+                    </div>
+
+                    <div class="field full">
+                        <label for="historyNote">Catatan singkat</label>
+                        <textarea id="historyNote" placeholder="Opsional: alasan perubahan modal, target, atau strategi bulan ini."></textarea>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="primary-btn" id="saveHistoryBtn" type="button">Simpan ke riwayat</button>
+                    <button class="secondary-btn" id="exportHistoryBtn" type="button">Export riwayat</button>
+                    <button class="neutral-btn" id="resetCurrentBtn" type="button">Reset input aktif</button>
+                    <button class="danger-btn" id="clearHistoryBtn" type="button">Hapus semua riwayat</button>
+                </div>
+
+                <div>
+                    <label>Preset modal cepat</label>
+                    <div class="chip-row" id="presetButtons"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="summary-grid">
+            <div class="panel summary-card">
+                <div id="summaryPrimaryLabel" class="summary-label">Modal bulanan</div>
+                <div id="summaryMonthly" class="summary-value">Rp0</div>
+                <div id="summaryPrimaryNote" class="summary-note">Nominal yang dibagi otomatis ke 5 aset sesuai porsi portofolio.</div>
+            </div>
+            <div class="panel summary-card">
+                <div id="summaryAnnualLabel" class="summary-label">Total modal periode</div>
+                <div id="summaryAnnual" class="summary-value">Rp0</div>
+                <div id="summaryAnnualNote" class="summary-note">Akumulasi modal selama periode yang dipilih.</div>
+            </div>
+            <div class="panel summary-card">
+                <div class="summary-label">Estimasi profit CAGR</div>
+                <div id="summaryGrowth" class="summary-value">Rp0</div>
+                <div id="summaryGrowthNote" class="summary-note">Berdasarkan periode aktif.</div>
+            </div>
+            <div class="panel summary-card">
+                <div class="summary-label">Estimasi dividen tahun 1</div>
+                <div id="summaryDividend" class="summary-value">Rp0</div>
+                <div class="summary-note">Pendekatan dividen tahun pertama berdasarkan akumulasi kontribusi bertahap.</div>
+            </div>
+        </section>
+
+        <section class="analysis-section">
+            <div class="panel hero-card">
+                <div class="section-header">
+                    <div>
+                        <div class="eyebrow">Real Return Tracker</div>
+                        <h2>Input hasil modal aktual</h2>
+                    </div>
+                    <p>Pilih histori sebelumnya sebagai dasar perbandingan, lalu masukkan nilai modal aktual Anda sekarang.</p>
+                </div>
+
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="returnHistorySelect">Ambil data dari histori</label>
+                        <select id="returnHistorySelect"></select>
+                    </div>
+
+                    <div class="field">
+                        <label for="actualResultAmount">Hasil modal aktual</label>
+                        <input type="text" id="actualResultAmount" placeholder="Contoh: 15.500.000">
+                    </div>
+
+                    <div class="field">
+                        <label id="referenceCapitalLabel">Modal histori per bulan</label>
+                        <input type="text" id="referenceMonthlyCapital" value="Rp0" readonly>
+                    </div>
+
+                    <div class="field">
+                        <label>Total input dari histori</label>
+                        <input type="text" id="referenceInvestedCapital" value="Rp0" readonly>
+                    </div>
+                </div>
+
+                <div class="helper" id="returnHistoryNote">
+                    Pilih histori terlebih dahulu agar real return dihitung dari total input sebelumnya.
+                </div>
+            </div>
+
+            <div class="panel asset-panel">
+                <div class="section-header">
+                    <div>
+                        <div class="eyebrow">Hasil Perbandingan</div>
+                        <h2>Real return</h2>
+                    </div>
+                </div>
+
+                <div class="return-grid">
+                    <div class="return-card">
+                        <span>Total input</span>
+                        <strong id="actualResultDisplay">Rp0</strong>
+                    </div>
+                    <div class="return-card">
+                        <span>Return persen</span>
+                        <strong id="realReturnPercent">0%</strong>
+                    </div>
+                    <div class="return-card">
+                        <span>Total aktual</span>
+                        <strong id="realReturnStatus">Rp0</strong>
+                    </div>
+                    <div class="return-card">
+                        <span>Selisih return nominal</span>
+                        <strong id="realReturnAmount">Rp0</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="two-column">
+            <div class="panel table-panel">
+                <div class="table-header">
+                    <div>
+                        <div class="eyebrow">Breakdown Portofolio</div>
+                        <h2>Alokasi per aset</h2>
+                    </div>
+                    <p>Klik nama aset untuk membuka detail fundamental dan fungsi aset di portofolio.</p>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aset</th>
+                                <th class="text-center">Porsi</th>
+                                <th class="text-right" id="allocationInputHeader">Per bulan</th>
+                                <th class="text-right" id="allocationTotalHeader">Total modal</th>
+                                <th class="text-right" id="growthHeader">Profit CAGR</th>
+                                <th class="text-right">Dividen thn 1</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allocationTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel asset-panel">
+                <div class="section-header">
+                    <div>
+                        <div class="eyebrow">Quick Insights</div>
+                        <h2>Ringkasan cerdas</h2>
+                    </div>
+                </div>
+
+                <div id="allocationBars" class="allocation-list"></div>
+
+                <div class="mini-grid">
+                    <div class="mini-card">
+                        <span>Proyeksi nilai portofolio</span>
+                        <strong id="projectedValue">Rp0</strong>
+                    </div>
+                    <div class="mini-card">
+                        <span id="projectedContributionLabel">Total modal periode</span>
+                        <strong id="projectedContribution">Rp0</strong>
+                    </div>
+                    <div class="mini-card">
+                        <span>Aset porsi terbesar</span>
+                        <strong id="largestAllocation">-</strong>
+                    </div>
+                    <div class="mini-card">
+                        <span>Aset CAGR tertinggi</span>
+                        <strong id="highestCagr">-</strong>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top:18px;">
+                    <div>
+                        <div class="eyebrow">Total Modal Aset</div>
+                        <h3>Total modal saya per aset</h3>
+                    </div>
+                </div>
+
+                <div id="assetTotalsList" class="mini-grid"></div>
+            </div>
+        </section>
+
+        <section class="panel history-panel">
+            <div class="section-header">
+                <div>
+                    <div class="eyebrow">Riwayat Tersimpan</div>
+                    <h2>Histori modal dan strategi</h2>
+                </div>
+                <p>Riwayat tersimpan lokal di browser yang sama. Anda bisa pakai ulang, export, atau hapus kapan saja.</p>
+            </div>
+
+            <div class="history-summary">
+                <div class="mini-card">
+                    <span>Total snapshot histori</span>
+                    <strong id="historyEntryCount">0 entri</strong>
+                </div>
+                <div class="mini-card">
+                    <span>Total input modal dari histori</span>
+                    <strong id="historyMonthlyTotal">Rp0</strong>
+                </div>
+                <div class="mini-card">
+                    <span>Total modal periode dari histori</span>
+                    <strong id="historyInvestedTotal">Rp0</strong>
+                </div>
+            </div>
+
+            <div class="history-layout">
+                <div>
+                    <div id="historyList" class="history-list"></div>
+                </div>
+                <div class="insight-list">
+                    <div class="insight-item">
+                        <strong>Bagaimana penyimpanan bekerja?</strong>
+                        <p>Input aktif tersimpan otomatis setiap Anda mengubah modal, periode, label, atau catatan. Untuk membuat jejak histori permanen, tekan tombol <em>Simpan ke riwayat</em>.</p>
+                    </div>
+                    <div class="insight-item">
+                        <strong>Catatan perhitungan</strong>
+                        <p>Profit CAGR menggunakan simulasi setoran bulanan dengan compounding bulanan. Dividen memakai pendekatan tahun pertama agar proyeksi tetap konservatif dan mudah dipahami.</p>
+                    </div>
+                    <div class="insight-item">
+                        <strong>Saran penggunaan</strong>
+                        <p>Buat snapshot berbeda untuk skenario gajian normal, bonus, atau target agresif. Nantinya Anda bisa membandingkan nominal dengan cepat dari panel histori.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-note">
+                Data histori tersimpan di perangkat Anda, bukan di server online. Jika cache browser dibersihkan, data lokal dapat ikut terhapus.
+            </div>
+        </section>
+    </div>
+
+    <div id="assetModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-card">
+            <button id="closeModalBtn" class="modal-close" type="button" aria-label="Tutup modal">&times;</button>
+            <h3 id="modalAssetName">Nama Aset</h3>
+            <p id="modalAssetDesc">Deskripsi aset.</p>
+            <div class="modal-stats">
+                <div class="modal-stat">
+                    <span>Porsi portofolio</span>
+                    <strong id="modalAssetWeight">0%</strong>
+                </div>
+                <div class="modal-stat">
+                    <span>CAGR asumsi</span>
+                    <strong id="modalAssetCagr">0% / tahun</strong>
+                </div>
+                <div class="modal-stat">
+                    <span>Yield dividen</span>
+                    <strong id="modalAssetDividend">0% / tahun</strong>
+                </div>
+                <div class="modal-stat">
+                    <span>Peran aset</span>
+                    <strong id="modalAssetRole">-</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        const ASSET_DB = {
+            voo: {
+                code: "VOO",
+                name: "VOO (Vanguard S&P 500 ETF)",
+                description: "Melacak perusahaan berkapitalisasi besar di Amerika Serikat dan cocok sebagai fondasi portofolio jangka panjang.",
+                cagr: 0.12,
+                dividend: 0.014,
+                weight: 0.55,
+                role: "Core growth"
+            },
+            vgt: {
+                code: "VGT",
+                name: "VGT (Vanguard Information Technology ETF)",
+                description: "Eksposur sektor teknologi besar seperti software, semikonduktor, dan hardware dengan potensi pertumbuhan lebih agresif.",
+                cagr: 0.19,
+                dividend: 0.008,
+                weight: 0.15,
+                role: "Growth booster"
+            },
+            bbca: {
+                code: "BBCA",
+                name: "BBCA (Bank Central Asia)",
+                description: "Saham perbankan unggulan Indonesia yang sering dianggap defensif dengan kualitas bisnis dan arus kas dividen yang baik.",
+                cagr: 0.13,
+                dividend: 0.028,
+                weight: 0.15,
+                role: "Stabilitas domestik"
+            },
+            vxus: {
+                code: "VXUS",
+                name: "VXUS (Vanguard Total International Stock ETF)",
+                description: "Diversifikasi global di luar Amerika Serikat untuk mengurangi konsentrasi geografis portofolio.",
+                cagr: 0.05,
+                dividend: 0.03,
+                weight: 0.10,
+                role: "Diversifikasi global"
+            },
+            btc: {
+                code: "BTC",
+                name: "BTC (Bitcoin)",
+                description: "Aset digital dengan volatilitas tinggi dan potensi return besar, cocok sebagai porsi satelit berisiko tinggi.",
+                cagr: 0.45,
+                dividend: 0,
+                weight: 0.05,
+                role: "High risk high reward"
+            }
+        };
+
+        const PRESET_VALUES = [500000, 1000000, 2500000, 5000000, 10000000];
+        const STATE_KEY = "dcaPlannerStateV1";
+        const HISTORY_KEY = "dcaPlannerHistoryV1";
+        const HISTORY_LIMIT = 15;
+
+        const state = {
+            monthlyCapital: 0,
+            periodYears: 1,
+            investmentMode: "dca",
+            historyTag: "",
+            historyNote: "",
+            selectedReturnHistoryId: "",
+            actualResultAmount: 0
+        };
+
+        const elements = {
+            investmentMode: document.getElementById("investmentMode"),
+            monthlyCapital: document.getElementById("monthlyCapital"),
+            periodYears: document.getElementById("periodYears"),
+            historyTag: document.getElementById("historyTag"),
+            historyNote: document.getElementById("historyNote"),
+            capitalInputLabel: document.getElementById("capitalInputLabel"),
+            capitalInputHelper: document.getElementById("capitalInputHelper"),
+            saveIndicator: document.getElementById("saveIndicator"),
+            summaryPrimaryLabel: document.getElementById("summaryPrimaryLabel"),
+            summaryPrimaryNote: document.getElementById("summaryPrimaryNote"),
+            summaryMonthly: document.getElementById("summaryMonthly"),
+            summaryAnnualLabel: document.getElementById("summaryAnnualLabel"),
+            summaryAnnualNote: document.getElementById("summaryAnnualNote"),
+            summaryAnnual: document.getElementById("summaryAnnual"),
+            summaryGrowth: document.getElementById("summaryGrowth"),
+            summaryDividend: document.getElementById("summaryDividend"),
+            summaryGrowthNote: document.getElementById("summaryGrowthNote"),
+            projectedValue: document.getElementById("projectedValue"),
+            projectedContribution: document.getElementById("projectedContribution"),
+            projectedContributionLabel: document.getElementById("projectedContributionLabel"),
+            largestAllocation: document.getElementById("largestAllocation"),
+            highestCagr: document.getElementById("highestCagr"),
+            allocationTableBody: document.getElementById("allocationTableBody"),
+            allocationBars: document.getElementById("allocationBars"),
+            assetTotalsList: document.getElementById("assetTotalsList"),
+            historyList: document.getElementById("historyList"),
+            historyEntryCount: document.getElementById("historyEntryCount"),
+            historyMonthlyTotal: document.getElementById("historyMonthlyTotal"),
+            historyInvestedTotal: document.getElementById("historyInvestedTotal"),
+            presetButtons: document.getElementById("presetButtons"),
+            growthHeader: document.getElementById("growthHeader"),
+            allocationInputHeader: document.getElementById("allocationInputHeader"),
+            allocationTotalHeader: document.getElementById("allocationTotalHeader"),
+            returnHistorySelect: document.getElementById("returnHistorySelect"),
+            actualResultAmount: document.getElementById("actualResultAmount"),
+            referenceCapitalLabel: document.getElementById("referenceCapitalLabel"),
+            referenceMonthlyCapital: document.getElementById("referenceMonthlyCapital"),
+            referenceInvestedCapital: document.getElementById("referenceInvestedCapital"),
+            returnHistoryNote: document.getElementById("returnHistoryNote"),
+            actualResultDisplay: document.getElementById("actualResultDisplay"),
+            realReturnAmount: document.getElementById("realReturnAmount"),
+            realReturnPercent: document.getElementById("realReturnPercent"),
+            realReturnStatus: document.getElementById("realReturnStatus"),
+            assetModal: document.getElementById("assetModal"),
+            modalAssetName: document.getElementById("modalAssetName"),
+            modalAssetDesc: document.getElementById("modalAssetDesc"),
+            modalAssetWeight: document.getElementById("modalAssetWeight"),
+            modalAssetCagr: document.getElementById("modalAssetCagr"),
+            modalAssetDividend: document.getElementById("modalAssetDividend"),
+            modalAssetRole: document.getElementById("modalAssetRole"),
+            toast: document.getElementById("toast")
+        };
+
+        const currencyFormatter = new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+
+        const compactNumberFormatter = new Intl.NumberFormat("id-ID", {
+            notation: "compact",
+            maximumFractionDigits: 1
+        });
+
+        function formatCurrency(value) {
+            return currencyFormatter.format(Math.round(value || 0));
+        }
+
+        function formatSignedCurrency(value) {
+            const rounded = Math.round(value || 0);
+            if (rounded > 0) {
+                return `+${formatCurrency(rounded)}`;
+            }
+
+            return formatCurrency(rounded);
+        }
+
+        function formatPercent(value) {
+            return `${(value * 100).toFixed(1)}%`;
+        }
+
+        function formatSignedPercent(value) {
+            const text = formatPercent(value || 0);
+            return value > 0 ? `+${text}` : text;
+        }
+
+        function formatInputValue(value) {
+            if (!value) {
+                return "";
+            }
+
+            return Number(value).toLocaleString("id-ID");
+        }
+
+        function parseInputValue(rawValue) {
+            const numeric = String(rawValue || "").replace(/[^0-9]/g, "");
+            return numeric ? Number(numeric) : 0;
+        }
+
+        function getModeLabel(mode) {
+            return mode === "lumpSum" ? "Satu kali invest" : "DCA bulanan";
+        }
+
+        function calculateReferenceCapital(amount, mode, periodYears) {
+            return mode === "lumpSum" ? amount : amount * 12 * periodYears;
+        }
+
+        function normalizeHistoryEntry(entry) {
+            const investmentMode = entry.investmentMode === "lumpSum" ? "lumpSum" : "dca";
+            const periodYears = Number(entry.periodYears || entry.projectionYears) || 1;
+
+            return {
+                id: entry.id || `${Date.now()}`,
+                monthlyCapital: Number(entry.monthlyCapital) || 0,
+                periodYears,
+                investmentMode,
+                label: entry.label || "",
+                note: entry.note || "",
+                createdAt: entry.createdAt || new Date().toISOString()
+            };
+        }
+
+        function getHistory() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+                return Array.isArray(parsed) ? parsed.map(normalizeHistoryEntry) : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function setHistory(history) {
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history.map(normalizeHistoryEntry)));
+        }
+
+        function saveState() {
+            localStorage.setItem(STATE_KEY, JSON.stringify(state));
+            elements.saveIndicator.textContent = `Tersimpan otomatis • ${new Date().toLocaleString("id-ID")}`;
+        }
+
+        function loadState() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(STATE_KEY) || "{}");
+                state.monthlyCapital = Number(saved.monthlyCapital) || 0;
+                state.periodYears = Number(saved.periodYears || saved.projectionYears) || 1;
+                state.investmentMode = saved.investmentMode === "lumpSum" ? "lumpSum" : "dca";
+                state.historyTag = saved.historyTag || "";
+                state.historyNote = saved.historyNote || "";
+                state.selectedReturnHistoryId = saved.selectedReturnHistoryId || "";
+                state.actualResultAmount = Number(saved.actualResultAmount) || 0;
+            } catch (error) {
+                state.monthlyCapital = 0;
+                state.periodYears = 1;
+                state.investmentMode = "dca";
+                state.historyTag = "";
+                state.historyNote = "";
+                state.selectedReturnHistoryId = "";
+                state.actualResultAmount = 0;
+            }
+        }
+
+        function syncFormWithState() {
+            elements.investmentMode.value = state.investmentMode;
+            elements.monthlyCapital.value = formatInputValue(state.monthlyCapital);
+            elements.periodYears.value = String(state.periodYears);
+            elements.historyTag.value = state.historyTag;
+            elements.historyNote.value = state.historyNote;
+            elements.actualResultAmount.value = formatInputValue(state.actualResultAmount);
+        }
+
+        function updateStateFromForm() {
+            state.investmentMode = elements.investmentMode.value === "lumpSum" ? "lumpSum" : "dca";
+            state.monthlyCapital = parseInputValue(elements.monthlyCapital.value);
+            state.periodYears = Number(elements.periodYears.value) || 1;
+            state.historyTag = elements.historyTag.value.trim();
+            state.historyNote = elements.historyNote.value.trim();
+            state.actualResultAmount = parseInputValue(elements.actualResultAmount.value);
+            state.selectedReturnHistoryId = elements.returnHistorySelect.value || state.selectedReturnHistoryId;
+        }
+
+        function futureValueOfMonthlyInvestment(monthlyContribution, annualRate, years) {
+            const months = years * 12;
+            const monthlyRate = annualRate / 12;
+
+            if (months <= 0 || monthlyContribution <= 0) {
+                return 0;
+            }
+
+            if (monthlyRate === 0) {
+                return monthlyContribution * months;
+            }
+
+            return monthlyContribution * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+        }
+
+        function futureValueOfLumpSumInvestment(principal, annualRate, years) {
+            if (principal <= 0 || years <= 0) {
+                return 0;
+            }
+
+            return principal * Math.pow(1 + (annualRate / 12), years * 12);
+        }
+
+        function estimateFirstYearDividend(inputCapital, annualDividendRate, mode) {
+            if (mode === "lumpSum") {
+                return inputCapital * annualDividendRate;
+            }
+
+            return inputCapital * 12 * (annualDividendRate / 2);
+        }
+
+        function renderDynamicLabels() {
+            const isLumpSum = state.investmentMode === "lumpSum";
+
+            elements.capitalInputLabel.textContent = isLumpSum ? "Modal satu kali invest" : "Modal investasi bulanan";
+            elements.capitalInputHelper.textContent = isLumpSum
+                ? "Masukkan nominal yang ingin Anda investasikan sekali di awal periode."
+                : "Masukkan nominal yang ingin Anda investasikan rutin setiap bulan.";
+            elements.summaryPrimaryLabel.textContent = isLumpSum ? "Modal sekali invest" : "Modal bulanan";
+            elements.summaryPrimaryNote.textContent = isLumpSum
+                ? "Nominal investasi awal yang langsung dibagi ke 5 aset."
+                : "Nominal yang dibagi otomatis ke 5 aset sesuai porsi portofolio.";
+            elements.summaryAnnualLabel.textContent = "Total modal periode";
+            elements.summaryAnnualNote.textContent = isLumpSum
+                ? "Total modal periode sama dengan sekali invest di awal periode."
+                : "Akumulasi modal rutin selama periode yang dipilih.";
+            elements.projectedContributionLabel.textContent = "Total modal periode";
+            elements.allocationInputHeader.textContent = isLumpSum ? "Sekali invest" : "Per bulan";
+            elements.allocationTotalHeader.textContent = "Total modal";
+        }
+
+        function buildAllocationResults() {
+            const result = [];
+
+            Object.keys(ASSET_DB).forEach((key) => {
+                const asset = ASSET_DB[key];
+                const inputAllocation = state.monthlyCapital * asset.weight;
+                const totalAllocation = calculateReferenceCapital(inputAllocation, state.investmentMode, state.periodYears);
+                const futureValue = state.investmentMode === "lumpSum"
+                    ? futureValueOfLumpSumInvestment(inputAllocation, asset.cagr, state.periodYears)
+                    : futureValueOfMonthlyInvestment(inputAllocation, asset.cagr, state.periodYears);
+                const cagrProfit = futureValue - totalAllocation;
+                const dividendProfit = estimateFirstYearDividend(inputAllocation, asset.dividend, state.investmentMode);
+
+                result.push({
+                    key,
+                    ...asset,
+                    inputAllocation,
+                    totalAllocation,
+                    futureValue,
+                    cagrProfit,
+                    dividendProfit
+                });
+            });
+
+            return result;
+        }
+
+        function renderSummary(allocationResults) {
+            const totalContribution = calculateReferenceCapital(state.monthlyCapital, state.investmentMode, state.periodYears);
+            const totalGrowth = allocationResults.reduce((sum, item) => sum + item.cagrProfit, 0);
+            const totalDividend = allocationResults.reduce((sum, item) => sum + item.dividendProfit, 0);
+            const totalProjectedValue = allocationResults.reduce((sum, item) => sum + item.futureValue, 0);
+
+            elements.summaryMonthly.textContent = formatCurrency(state.monthlyCapital);
+            elements.summaryAnnual.textContent = formatCurrency(totalContribution);
+            elements.summaryGrowth.textContent = formatCurrency(totalGrowth);
+            elements.summaryDividend.textContent = formatCurrency(totalDividend);
+            elements.summaryGrowthNote.textContent = `Profit akumulatif untuk periode ${state.periodYears} tahun dengan mode ${getModeLabel(state.investmentMode).toLowerCase()}.`;
+            elements.projectedValue.textContent = formatCurrency(totalProjectedValue);
+            elements.projectedContribution.textContent = formatCurrency(totalContribution);
+
+            const largestAllocation = allocationResults.reduce((best, item) => item.weight > best.weight ? item : best, allocationResults[0]);
+            const highestCagr = allocationResults.reduce((best, item) => item.cagr > best.cagr ? item : best, allocationResults[0]);
+
+            elements.largestAllocation.textContent = `${largestAllocation.code} (${formatPercent(largestAllocation.weight)})`;
+            elements.highestCagr.textContent = `${highestCagr.code} (${formatPercent(highestCagr.cagr)})`;
+        }
+
+        function renderTable(allocationResults) {
+            elements.growthHeader.textContent = `Profit CAGR (${state.periodYears} thn)`;
+
+            const rows = allocationResults.map((item) => `
+                <tr>
+                    <td><span class="asset-trigger" data-asset="${item.key}">${item.code}</span></td>
+                    <td class="text-center">${formatPercent(item.weight)}</td>
+                    <td class="text-right">${formatCurrency(item.inputAllocation)}</td>
+                    <td class="text-right">${formatCurrency(item.totalAllocation)}</td>
+                    <td class="text-right gain">${formatCurrency(item.cagrProfit)}</td>
+                    <td class="text-right ${item.dividendProfit > 0 ? "gain" : ""}">${formatCurrency(item.dividendProfit)}</td>
+                </tr>
+            `).join("");
+
+            const totalContribution = calculateReferenceCapital(state.monthlyCapital, state.investmentMode, state.periodYears);
+            const totalGrowth = allocationResults.reduce((sum, item) => sum + item.cagrProfit, 0);
+            const totalDividend = allocationResults.reduce((sum, item) => sum + item.dividendProfit, 0);
+
+            elements.allocationTableBody.innerHTML = `
+                ${rows}
+                <tr class="total-row">
+                    <td><strong>TOTAL</strong></td>
+                    <td class="text-center"><strong>100%</strong></td>
+                    <td class="text-right"><strong>${formatCurrency(state.monthlyCapital)}</strong></td>
+                    <td class="text-right"><strong>${formatCurrency(totalContribution)}</strong></td>
+                    <td class="text-right gain"><strong>${formatCurrency(totalGrowth)}</strong></td>
+                    <td class="text-right gain"><strong>${formatCurrency(totalDividend)}</strong></td>
+                </tr>
+            `;
+
+            document.querySelectorAll("[data-asset]").forEach((element) => {
+                element.addEventListener("click", () => openAssetModal(element.dataset.asset));
+            });
+        }
+
+        function renderAllocationBars() {
+            const history = getHistory();
+            const totalInputHistory = history.reduce((sum, entry) => sum + entry.monthlyCapital, 0);
+
+            elements.allocationBars.innerHTML = Object.keys(ASSET_DB).map((key) => {
+                const asset = ASSET_DB[key];
+                const assetShare = totalInputHistory * asset.weight;
+
+                return `
+                    <div class="allocation-item">
+                        <div class="allocation-top">
+                            <strong>${asset.code}</strong>
+                            <span>${formatCurrency(assetShare)}</span>
+                        </div>
+                        <div class="bar"><span style="width:${asset.weight * 100}%"></span></div>
+                        <div class="helper" style="margin-top:10px;">${formatPercent(asset.weight)} dari total input histori</div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function renderAssetTotals() {
+            const history = getHistory();
+            const totalInputHistory = history.reduce((sum, entry) => sum + entry.monthlyCapital, 0);
+
+            elements.assetTotalsList.innerHTML = Object.keys(ASSET_DB).map((key) => {
+                const asset = ASSET_DB[key];
+                const assetShare = totalInputHistory * asset.weight;
+
+                return `
+                    <div class="mini-card">
+                        <span>${asset.code}</span>
+                        <strong>${formatCurrency(assetShare)}</strong>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function applyReturnTone(element, numericValue) {
+            element.classList.remove("positive", "negative");
+            if (numericValue > 0) {
+                element.classList.add("positive");
+            } else if (numericValue < 0) {
+                element.classList.add("negative");
+            }
+        }
+
+        function renderReturnTracker(history) {
+            if (!history.length) {
+                elements.returnHistorySelect.innerHTML = `<option value="">Belum ada histori</option>`;
+                elements.returnHistorySelect.disabled = true;
+                elements.referenceCapitalLabel.textContent = "Modal histori";
+                elements.referenceMonthlyCapital.value = formatCurrency(0);
+                elements.referenceInvestedCapital.value = formatCurrency(0);
+                elements.returnHistoryNote.textContent = "Simpan histori terlebih dahulu agar real return bisa dihitung dari data sebelumnya.";
+                elements.actualResultDisplay.textContent = formatCurrency(0);
+                elements.realReturnAmount.textContent = formatCurrency(0);
+                elements.realReturnPercent.textContent = "0%";
+                elements.realReturnStatus.textContent = formatCurrency(state.actualResultAmount);
+                elements.actualResultDisplay.classList.remove("positive", "negative");
+                elements.realReturnAmount.classList.remove("positive", "negative");
+                elements.realReturnPercent.classList.remove("positive", "negative");
+                elements.realReturnStatus.classList.remove("positive", "negative");
+                return;
+            }
+
+            elements.returnHistorySelect.disabled = false;
+
+            if (!history.some((entry) => entry.id === state.selectedReturnHistoryId)) {
+                state.selectedReturnHistoryId = history[0].id;
+            }
+
+            elements.returnHistorySelect.innerHTML = history.map((entry) => `
+                <option value="${entry.id}">
+                    ${entry.label || "Tanpa label"} - ${getModeLabel(entry.investmentMode)} - ${formatCurrency(entry.monthlyCapital)}
+                </option>
+            `).join("");
+            elements.returnHistorySelect.value = state.selectedReturnHistoryId;
+
+            const selectedEntry = history.find((entry) => entry.id === state.selectedReturnHistoryId) || history[0];
+            const referenceCapital = calculateReferenceCapital(selectedEntry.monthlyCapital, selectedEntry.investmentMode, selectedEntry.periodYears);
+            const actualResult = state.actualResultAmount;
+            const returnAmount = actualResult - referenceCapital;
+            const returnPercent = referenceCapital > 0 ? (returnAmount / referenceCapital) : 0;
+
+            elements.referenceCapitalLabel.textContent = selectedEntry.investmentMode === "lumpSum"
+                ? "Modal histori sekali invest"
+                : "Modal histori per bulan";
+            elements.referenceMonthlyCapital.value = formatCurrency(selectedEntry.monthlyCapital);
+            elements.referenceInvestedCapital.value = formatCurrency(referenceCapital);
+            elements.returnHistoryNote.textContent = `Acuan dipakai dari histori ${selectedEntry.label || "tanpa label"} • ${getModeLabel(selectedEntry.investmentMode)} • periode ${selectedEntry.periodYears} tahun.`;
+            elements.actualResultDisplay.textContent = formatCurrency(referenceCapital);
+            elements.realReturnStatus.textContent = formatCurrency(actualResult);
+
+            if (!actualResult) {
+                elements.realReturnAmount.textContent = formatCurrency(0);
+                elements.realReturnPercent.textContent = "0%";
+                elements.realReturnAmount.classList.remove("positive", "negative");
+                elements.realReturnPercent.classList.remove("positive", "negative");
+                elements.realReturnStatus.classList.remove("positive", "negative");
+                elements.actualResultDisplay.classList.remove("positive", "negative");
+                return;
+            }
+
+            elements.realReturnAmount.textContent = formatSignedCurrency(returnAmount);
+            elements.realReturnPercent.textContent = formatSignedPercent(returnPercent);
+            elements.actualResultDisplay.classList.remove("positive", "negative");
+            applyReturnTone(elements.realReturnAmount, returnAmount);
+            applyReturnTone(elements.realReturnPercent, returnAmount);
+            applyReturnTone(elements.realReturnStatus, returnAmount);
+        }
+
+        function renderHistory() {
+            const history = getHistory();
+            const totalInput = history.reduce((sum, entry) => sum + entry.monthlyCapital, 0);
+            const totalInvested = history.reduce((sum, entry) => sum + calculateReferenceCapital(entry.monthlyCapital, entry.investmentMode, entry.periodYears), 0);
+
+            elements.historyEntryCount.textContent = `${history.length} entri`;
+            elements.historyMonthlyTotal.textContent = formatCurrency(totalInput);
+            elements.historyInvestedTotal.textContent = formatCurrency(totalInvested);
+
+            if (!history.length) {
+                elements.historyList.innerHTML = `
+                    <div class="history-empty">
+                        Belum ada snapshot histori. Isi modal lalu tekan <strong>Simpan ke riwayat</strong>.
+                    </div>
+                `;
+                renderReturnTracker(history);
+                return;
+            }
+
+            elements.historyList.innerHTML = history.map((entry) => {
+                const totalReference = calculateReferenceCapital(entry.monthlyCapital, entry.investmentMode, entry.periodYears);
+                return `
+                    <article class="history-item">
+                        <div class="history-meta">
+                            <div>
+                                <strong>${formatCurrency(entry.monthlyCapital)}</strong>
+                                <div class="history-date">${new Date(entry.createdAt).toLocaleString("id-ID")}</div>
+                            </div>
+                            <div>${getModeLabel(entry.investmentMode)} • ${entry.periodYears} tahun</div>
+                        </div>
+                        <div class="history-note">${entry.note || "Tidak ada catatan tambahan."}</div>
+                        <div class="helper">${entry.label || "Tanpa label"} • Total modal periode ${formatCurrency(totalReference)}</div>
+                        <div class="history-actions">
+                            <button class="neutral-btn" type="button" data-use-history="${entry.id}">Gunakan lagi</button>
+                            <button class="danger-btn" type="button" data-delete-history="${entry.id}">Hapus</button>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+
+            document.querySelectorAll("[data-use-history]").forEach((button) => {
+                button.addEventListener("click", () => useHistoryEntry(button.dataset.useHistory));
+            });
+
+            document.querySelectorAll("[data-delete-history]").forEach((button) => {
+                button.addEventListener("click", () => deleteHistoryEntry(button.dataset.deleteHistory));
+            });
+
+            renderReturnTracker(history);
+        }
+
+        function rerender() {
+            renderDynamicLabels();
+            const allocationResults = buildAllocationResults();
+            renderSummary(allocationResults);
+            renderTable(allocationResults);
+            renderAllocationBars();
+            renderAssetTotals();
+            renderHistory();
+        }
+
+        function showToast(message) {
+            elements.toast.textContent = message;
+            elements.toast.classList.add("show");
+            clearTimeout(showToast.timeoutId);
+            showToast.timeoutId = setTimeout(() => {
+                elements.toast.classList.remove("show");
+            }, 2200);
+        }
+
+        function saveSnapshotToHistory() {
+            updateStateFromForm();
+
+            if (!state.monthlyCapital) {
+                showToast("Isi modal investasi terlebih dahulu.");
+                return;
+            }
+
+            const history = getHistory();
+            const entry = {
+                id: `${Date.now()}`,
+                monthlyCapital: state.monthlyCapital,
+                periodYears: state.periodYears,
+                investmentMode: state.investmentMode,
+                label: state.historyTag,
+                note: state.historyNote,
+                createdAt: new Date().toISOString()
+            };
+
+            const updatedHistory = [entry, ...history].slice(0, HISTORY_LIMIT);
+            setHistory(updatedHistory);
+            state.selectedReturnHistoryId = entry.id;
+            saveState();
+            rerender();
+            showToast("Snapshot berhasil disimpan ke histori.");
+        }
+
+        function useHistoryEntry(entryId) {
+            const entry = getHistory().find((item) => item.id === entryId);
+            if (!entry) {
+                showToast("Data histori tidak ditemukan.");
+                return;
+            }
+
+            state.monthlyCapital = entry.monthlyCapital;
+            state.periodYears = entry.periodYears;
+            state.investmentMode = entry.investmentMode;
+            state.historyTag = entry.label || "";
+            state.historyNote = entry.note || "";
+            state.selectedReturnHistoryId = entry.id;
+            syncFormWithState();
+            saveState();
+            rerender();
+            showToast("Snapshot histori berhasil dimuat.");
+        }
+
+        function deleteHistoryEntry(entryId) {
+            const updatedHistory = getHistory().filter((item) => item.id !== entryId);
+            if (state.selectedReturnHistoryId === entryId) {
+                state.selectedReturnHistoryId = updatedHistory[0]?.id || "";
+            }
+            setHistory(updatedHistory);
+            saveState();
+            rerender();
+            showToast("Satu entri histori dihapus.");
+        }
+
+        function clearAllHistory() {
+            if (!confirm("Hapus semua histori yang tersimpan di browser ini?")) {
+                return;
+            }
+
+            state.selectedReturnHistoryId = "";
+            setHistory([]);
+            saveState();
+            rerender();
+            showToast("Semua histori berhasil dihapus.");
+        }
+
+        function resetCurrentForm() {
+            state.monthlyCapital = 0;
+            state.periodYears = 1;
+            state.investmentMode = "dca";
+            state.historyTag = "";
+            state.historyNote = "";
+            state.actualResultAmount = 0;
+            syncFormWithState();
+            saveState();
+            rerender();
+            showToast("Input aktif sudah direset.");
+        }
+
+        function exportHistory() {
+            const history = getHistory();
+            if (!history.length) {
+                showToast("Belum ada histori untuk diexport.");
+                return;
+            }
+
+            const payload = {
+                exportedAt: new Date().toISOString(),
+                source: "DCA Portfolio Planner Pro",
+                history
+            };
+
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `dca-history-${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+            showToast("Riwayat berhasil diexport.");
+        }
+
+        function openAssetModal(assetKey) {
+            const asset = ASSET_DB[assetKey];
+            if (!asset) {
+                return;
+            }
+
+            elements.modalAssetName.textContent = asset.name;
+            elements.modalAssetDesc.textContent = asset.description;
+            elements.modalAssetWeight.textContent = formatPercent(asset.weight);
+            elements.modalAssetCagr.textContent = `${formatPercent(asset.cagr)} / tahun`;
+            elements.modalAssetDividend.textContent = `${formatPercent(asset.dividend)} / tahun`;
+            elements.modalAssetRole.textContent = asset.role;
+            elements.assetModal.classList.add("active");
+            elements.assetModal.setAttribute("aria-hidden", "false");
+        }
+
+        function closeAssetModal() {
+            elements.assetModal.classList.remove("active");
+            elements.assetModal.setAttribute("aria-hidden", "true");
+        }
+
+        function buildPresetButtons() {
+            elements.presetButtons.innerHTML = PRESET_VALUES.map((value) => `
+                <button class="chip" type="button" data-preset="${value}">${formatCurrency(value)}</button>
+            `).join("");
+
+            document.querySelectorAll("[data-preset]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    state.monthlyCapital = Number(button.dataset.preset);
+                    elements.monthlyCapital.value = formatInputValue(state.monthlyCapital);
+                    saveState();
+                    rerender();
+                    showToast("Preset modal diterapkan.");
+                });
+            });
+        }
+
+        function attachEvents() {
+            elements.investmentMode.addEventListener("change", () => {
+                updateStateFromForm();
+                saveState();
+                rerender();
+            });
+
+            elements.monthlyCapital.addEventListener("input", () => {
+                const numericValue = parseInputValue(elements.monthlyCapital.value);
+                elements.monthlyCapital.value = formatInputValue(numericValue);
+                updateStateFromForm();
+                saveState();
+                rerender();
+            });
+
+            elements.periodYears.addEventListener("change", () => {
+                updateStateFromForm();
+                saveState();
+                rerender();
+            });
+
+            elements.historyTag.addEventListener("input", () => {
+                updateStateFromForm();
+                saveState();
+            });
+
+            elements.historyNote.addEventListener("input", () => {
+                updateStateFromForm();
+                saveState();
+            });
+
+            elements.returnHistorySelect.addEventListener("change", () => {
+                state.selectedReturnHistoryId = elements.returnHistorySelect.value;
+                saveState();
+                rerender();
+            });
+
+            elements.actualResultAmount.addEventListener("input", () => {
+                const numericValue = parseInputValue(elements.actualResultAmount.value);
+                elements.actualResultAmount.value = formatInputValue(numericValue);
+                updateStateFromForm();
+                saveState();
+                rerender();
+            });
+
+            document.getElementById("saveHistoryBtn").addEventListener("click", saveSnapshotToHistory);
+            document.getElementById("exportHistoryBtn").addEventListener("click", exportHistory);
+            document.getElementById("resetCurrentBtn").addEventListener("click", resetCurrentForm);
+            document.getElementById("clearHistoryBtn").addEventListener("click", clearAllHistory);
+            document.getElementById("closeModalBtn").addEventListener("click", closeAssetModal);
+
+            elements.assetModal.addEventListener("click", (event) => {
+                if (event.target === elements.assetModal) {
+                    closeAssetModal();
+                }
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    closeAssetModal();
+                }
+            });
+        }
+
+        function init() {
+            loadState();
+            syncFormWithState();
+            buildPresetButtons();
+            attachEvents();
+            rerender();
+
+            if (state.monthlyCapital > 0) {
+                elements.saveIndicator.textContent = "Data lama berhasil dimuat dari browser";
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
