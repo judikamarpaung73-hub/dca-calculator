@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Dynamic DCA Portofolio</title>
+    <title>Kalkulator Dynamic DCA Portofolio v2</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,12 +13,12 @@
             margin: 0;
         }
        .container {
-            max-width: 700px;
+            max-width: 900px;
             margin: auto;
             background: #fff;
             padding: 25px 35px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         h2 {
             text-align: center;
@@ -39,47 +39,96 @@
             font-weight: 600;
             margin-bottom: 5px;
             color: #34495e;
+            font-size: 14px;
         }
         input {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccd1d1;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 15px;
             box-sizing: border-box;
+            background-color: #fff;
         }
         input:focus {
             border-color: #3498db;
             outline: none;
+            background-color: #fcfdfd;
         }
        .section-title {
-            margin-top: 25px;
-            margin-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 15px;
             font-size: 18px;
             color: #2980b9;
-            border-bottom: 2px solid #ecf0f1;
+            border-bottom: 2px solid #3498db;
             padding-bottom: 5px;
+            font-weight: bold;
         }
        .info-note {
-            font-size: 12px;
+            font-size: 13px;
             color: #e67e22;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             background-color: #fdf5e6;
-            padding: 10px;
-            border-left: 3px solid #e67e22;
-            border-radius: 3px;
+            padding: 12px;
+            border-left: 4px solid #e67e22;
+            border-radius: 4px;
+            line-height: 1.5;
         }
+        
+        /* Grid Layout untuk memisahkan Indikator ETF */
+       .etf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+       .etf-card {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+        }
+       .etf-card h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: #2c3e50;
+            border-bottom: 2px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+
+        /* Grid Layout untuk BBCA & BTC */
+       .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+       .asset-card {
+            background-color: #fcfcfc;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+        }
+       .asset-card h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: #2c3e50;
+            border-bottom: 2px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+
         button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background-color: #27ae60;
             color: #fff;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 30px;
             transition: background 0.3s;
         }
         button:hover {
@@ -90,7 +139,7 @@
             padding: 20px;
             background-color: #e8f6f3;
             border-left: 5px solid #1abc9c;
-            border-radius: 5px;
+            border-radius: 8px;
             display: none;
         }
        .result-item {
@@ -106,7 +155,7 @@
             color: #2c3e50;
             border-bottom: none;
             margin-top: 15px;
-            font-size: 18px;
+            font-size: 19px;
         }
        .buffer-info {
             margin-top: 15px;
@@ -114,6 +163,7 @@
             border-radius: 5px;
             font-weight: bold;
             text-align: center;
+            line-height: 1.5;
         }
        .buffer-save {
             background-color: #d4edda;
@@ -134,61 +184,113 @@
     <p class="subtitle">VOO (55%) | VGT (15%) | BBCA (15%) | VXUS (10%) | BTC (5%)</p>
     
     <div class="info-note">
-        * Catatan: Hanya kolom <strong>Modal</strong> yang wajib diisi. Kolom indikator lainnya boleh dikosongkan jika tidak ada data; sistem otomatis menggunakan pengganda standar (1.0x).
+        💡 <strong>Petunjuk Penggunaan:</strong><br>
+        1. Isi kolom <strong>Modal Investasi</strong> (pemisah ribuan titik akan muncul otomatis).<br>
+        2. Masukkan indikator pasar di kolom yang Anda miliki. Kolom indikator bersifat <strong>opsional</strong>. Jika dikosongkan, sistem otomatis mengasumsikan pasar normal (Multiplier: 1.00x).
     </div>
 
     <div class="form-group">
-        <label for="modal">Modal Investasi Bulan Ini (Rp) <span style="color: red;">*</span></label>
-        <input type="text" id="modal" oninput="formatInputThousand(this)" placeholder="Contoh: 10.000.000" required>
+        <label for="modal" style="font-size: 16px;">Modal Investasi Bulan Ini (Rp) <span style="color: red;">*</span></label>
+        <input type="text" id="modal" oninput="formatInputThousand(this)" placeholder="Contoh: 10.000.000" style="padding: 12px; font-size: 18px; font-weight: bold;" required>
     </div>
 
-    <div class="section-title">Indikator ETF (VOO, VGT, VXUS)</div>
-    <div class="form-group">
-        <label for="rsi">Nilai RSI(14) Mingguan ETF (Kosongkan jika tidak ada)</label>
-        <input type="number" id="rsi" placeholder="Contoh: 35">
-    </div>
-    <div class="form-group">
-        <label for="harga_etf">Harga ETF Terkini (Kosongkan jika tidak ada)</label>
-        <input type="number" id="harga_etf" placeholder="Contoh: 692.09" step="any">
-    </div>
-    <div class="form-group">
-        <label for="ma200">Nilai MA(200) ETF (Kosongkan jika tidak ada)</label>
-        <input type="number" id="ma200" placeholder="Contoh: 516.95" step="any">
+    <div class="section-title">Indikator Masing-Masing ETF</div>
+    <div class="etf-grid">
+        
+        <div class="etf-card">
+            <h3>VOO (Bobot: 55%)</h3>
+            <div class="form-group">
+                <label for="voo_rsi">RSI(14) Mingguan VOO</label>
+                <input type="number" id="voo_rsi" placeholder="Contoh: 35">
+            </div>
+            <div class="form-group">
+                <label for="voo_harga">Harga VOO Terkini ($)</label>
+                <input type="number" id="voo_harga" placeholder="Contoh: 692.09" step="any">
+            </div>
+            <div class="form-group">
+                <label for="voo_ma200">Nilai MA(200) VOO ($)</label>
+                <input type="number" id="voo_ma200" placeholder="Contoh: 516.95" step="any">
+            </div>
+        </div>
+
+        <div class="etf-card">
+            <h3>VGT (Bobot: 15%)</h3>
+            <div class="form-group">
+                <label for="vgt_rsi">RSI(14) Mingguan VGT</label>
+                <input type="number" id="vgt_rsi" placeholder="Contoh: 42">
+            </div>
+            <div class="form-group">
+                <label for="vgt_harga">Harga VGT Terkini ($)</label>
+                <input type="number" id="vgt_harga" placeholder="Contoh: 120.73" step="any">
+            </div>
+            <div class="form-group">
+                <label for="vgt_ma200">Nilai MA(200) VGT ($)</label>
+                <input type="number" id="vgt_ma200" placeholder="Contoh: 101.02" step="any">
+            </div>
+        </div>
+
+        <div class="etf-card">
+            <h3>VXUS (Bobot: 10%)</h3>
+            <div class="form-group">
+                <label for="vxus_rsi">RSI(14) Mingguan VXUS</label>
+                <input type="number" id="vxus_rsi" placeholder="Contoh: 50">
+            </div>
+            <div class="form-group">
+                <label for="vxus_harga">Harga VXUS Terkini ($)</label>
+                <input type="number" id="vxus_harga" placeholder="Contoh: 85.68" step="any">
+            </div>
+            <div class="form-group">
+                <label for="vxus_ma200">Nilai MA(200) VXUS ($)</label>
+                <input type="number" id="vxus_ma200" placeholder="Contoh: 66.54" step="any">
+            </div>
+        </div>
+
     </div>
 
-    <div class="section-title">Indikator Perbankan (BBCA)</div>
-    <div class="form-group">
-        <label for="pbv_wajar">Rata-rata Wajar PBV BBCA (Default: 4.6)</label>
-        <input type="number" id="pbv_wajar" value="4.6" step="any">
-    </div>
-    <div class="form-group">
-        <label for="pbv_kini">PBV BBCA Terkini (Kosongkan jika tidak ada)</label>
-        <input type="number" id="pbv_kini" placeholder="Contoh: 4.8" step="any">
+    <div class="section-title">Indikator BBCA & BTC</div>
+    <div class="asset-grid">
+        
+        <div class="asset-card">
+            <h3>BBCA (Bobot: 15%)</h3>
+            <div class="form-group">
+                <label for="pbv_wajar">Rata-rata Wajar PBV BBCA (Default: 4.6)</label>
+                <input type="number" id="pbv_wajar" value="4.6" step="any">
+            </div>
+            <div class="form-group">
+                <label for="pbv_kini">PBV BBCA Terkini</label>
+                <input type="number" id="pbv_kini" placeholder="Contoh: 3.8" step="any">
+            </div>
+        </div>
+
+        <div class="asset-card">
+            <h3>Bitcoin / BTC (Bobot: 5%)</h3>
+            <div class="form-group">
+                <label for="fng">Crypto Fear & Greed Index (0-100)</label>
+                <input type="number" id="fng" placeholder="Contoh: 22">
+            </div>
+        </div>
+
     </div>
 
-    <div class="section-title">Indikator Kripto (BTC)</div>
-    <div class="form-group">
-        <label for="fng">Crypto Fear & Greed Index (Kosongkan jika tidak ada)</label>
-        <input type="number" id="fng" placeholder="Contoh: 25">
-    </div>
-
-    <button onclick="hitungDCA()">Hitung Alokasi Investasi</button>
+    <button onclick="hitungDCA()">Mulai Hitung Alokasi Pembelian</button>
 
     <div class="result-box" id="result-box">
-        <div class="result-item"><span>VOO (55%):</span> <span id="res-voo">Rp 0</span></div>
-        <div class="result-item"><span>VGT (15%):</span> <span id="res-vgt">Rp 0</span></div>
-        <div class="result-item"><span>VXUS (10%):</span> <span id="res-vxus">Rp 0</span></div>
-        <div class="result-item"><span>BBCA (15%):</span> <span id="res-bbca">Rp 0</span></div>
-        <div class="result-item"><span>BTC (5%):</span> <span id="res-btc">Rp 0</span></div>
+        <div class="result-item"><span>VOO (55%):</span> <span id="res-voo" style="font-weight: bold; color: #2c3e50;">Rp 0</span></div>
+        <div class="result-item"><span>VGT (15%):</span> <span id="res-vgt" style="font-weight: bold; color: #2c3e50;">Rp 0</span></div>
+        <div class="result-item"><span>VXUS (10%):</span> <span id="res-vxus" style="font-weight: bold; color: #2c3e50;">Rp 0</span></div>
+        <div class="result-item"><span>BBCA (15%):</span> <span id="res-bbca" style="font-weight: bold; color: #2c3e50;">Rp 0</span></div>
+        <div class="result-item"><span>BTC (5%):</span> <span id="res-btc" style="font-weight: bold; color: #2c3e50;">Rp 0</span></div>
         
-        <div class="result-item bold"><span>Total Uang Dibeli Bulan Ini:</span> <span id="res-total">Rp 0</span></div>
+        <div class="result-item bold" style="border-top: 2px solid #1abc9c; padding-top: 10px;">
+            <span>Total Uang Yang Dibelanjakan:</span> <span id="res-total" style="color: #27ae60;">Rp 0</span>
+        </div>
         
         <div id="buffer-alert" class="buffer-info"></div>
     </div>
 </div>
 
 <script>
-    // Fungsi memformat input teks menjadi format titik ribuan Indonesia
+    // Fungsi memformat input teks menjadi format titik ribuan Indonesia saat mengetik
     function formatInputThousand(input) {
         let value = input.value.replace(/\./g, "").replace(/\D/g, "");
         if (value === "") {
@@ -198,105 +300,113 @@
         input.value = new Intl.NumberFormat('id-ID').format(value);
     }
 
-    // Fungsi utilitas format angka desimal ke Rupiah
+    // Fungsi utilitas format nominal ke Rupiah
     function formatRupiah(angka) {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
     }
 
+    // Fungsi kalkulasi Multiplier untuk masing-masing ETF
+    function hitungMultiplierEtf(rsiId, hargaId, ma200Id) {
+        const rsiVal = document.getElementById(rsiId).value;
+        const rsi = rsiVal!== ""? parseFloat(rsiVal) : NaN;
+
+        const hargaVal = document.getElementById(hargaId).value;
+        const harga_etf = hargaVal!== ""? parseFloat(hargaVal) : NaN;
+
+        const ma200Val = document.getElementById(ma200Id).value;
+        const ma200 = ma200Val!== ""? parseFloat(ma200Val) : NaN;
+
+        let m_rsi = 1.0;
+        let hasRsi =!isNaN(rsi);
+        if (hasRsi) {
+            if (rsi <= 30) m_rsi = 1.5;
+            else if (rsi <= 45) m_rsi = 1.2;
+            else if (rsi <= 60) m_rsi = 1.0;
+            else if (rsi <= 70) m_rsi = 0.8;
+            else m_rsi = 0.5;
+        }
+
+        let m_ma = 1.0;
+        let hasMa =!isNaN(harga_etf) &&!isNaN(ma200) && ma200 > 0;
+        if (hasMa) {
+            let dev = ((harga_etf - ma200) / ma200) * 100;
+            if (dev <= -15) m_ma = 2.0;
+            else if (dev <= -3) m_ma = 1.5;
+            else if (dev < 0) m_ma = 1.2;
+            else if (dev <= 3) m_ma = 1.0;
+            else if (dev <= 6) m_ma = 0.8;
+            else m_ma = 0.5;
+        }
+
+        // Cari rata-rata jika data RSI dan MA sama-sama lengkap, atau gunakan salah satu yang terisi
+        let m_final = 1.0;
+        if (hasRsi && hasMa) {
+            m_final = (m_rsi + m_ma) / 2;
+        } else if (hasRsi) {
+            m_final = m_rsi;
+        } else if (hasMa) {
+            m_final = m_ma;
+        }
+        
+        return m_final;
+    }
+
     function hitungDCA() {
-        // Ambil modal dari teks input, hilangkan titik ribuan agar kembali menjadi angka murni
+        // Ambil modal utama dari input
         const modalRaw = document.getElementById('modal').value;
         const modal = parseFloat(modalRaw.replace(/\./g, "")) || 0;
 
-        if(!modal || modal <= 0) {
+        if (!modal || modal <= 0) {
             alert("Harap masukkan Modal Investasi terlebih dahulu!");
             return;
         }
 
-        // Ambil nilai input lainnya (jika kosong, ubah jadi NaN agar tidak merusak rumus desimal)
-        const rsiVal = document.getElementById('rsi').value;
-        const rsi = rsiVal!== ""? parseFloat(rsiVal) : NaN;
+        // 1. Alokasi Dasar Sesuai Bobot Portofolio Lama Anda
+        const baseVOO = modal * 0.55;
+        const baseVGT = modal * 0.15;
+        const baseVXUS = modal * 0.10;
+        const baseBBCA = modal * 0.15;
+        const baseBTC = modal * 0.05;
 
-        const hargaEtfVal = document.getElementById('harga_etf').value;
-        const harga_etf = hargaEtfVal!== ""? parseFloat(hargaEtfVal) : NaN;
+        // 2. Hitung Multiplier Masing-masing ETF secara Terpisah
+        const m_voo = hitungMultiplierEtf('voo_rsi', 'voo_harga', 'voo_ma200');
+        const m_vgt = hitungMultiplierEtf('vgt_rsi', 'vgt_harga', 'vgt_ma200');
+        const m_vxus = hitungMultiplierEtf('vxus_rsi', 'vxus_harga', 'vxus_ma200');
 
-        const ma200Val = document.getElementById('ma200').value;
-        const ma200 = ma200Val!== ""? parseFloat(ma200Val) : NaN;
-
+        // 3. Kalkulasi Multiplier BBCA (Berdasarkan Deviasi PBV)
         const pbvWajarVal = document.getElementById('pbv_wajar').value;
         const pbv_wajar = pbvWajarVal!== ""? parseFloat(pbvWajarVal) : 4.6;
 
         const pbvKiniVal = document.getElementById('pbv_kini').value;
         const pbv_kini = pbvKiniVal!== ""? parseFloat(pbvKiniVal) : NaN;
 
-        const fngVal = document.getElementById('fng').value;
-        const fng = fngVal!== ""? parseFloat(fngVal) : NaN;
-
-        // 1. Alokasi Dasar Sesuai Bobot Portofolio Lama
-        const baseVOO = modal * 0.55;
-        const baseVGT = modal * 0.15;
-        const baseBBCA = modal * 0.15;
-        const baseVXUS = modal * 0.10;
-        const baseBTC = modal * 0.05;
-
-        // 2. Kalkulasi Multiplier ETF (Bisa dari RSI, Deviasi MA200, atau rata-rata keduanya)
-        let m_rsi = 1.0;
-        let hasRsi =!isNaN(rsi);
-        if(hasRsi) {
-            if(rsi <= 30) m_rsi = 1.5;
-            else if(rsi <= 45) m_rsi = 1.2;
-            else if(rsi <= 60) m_rsi = 1.0;
-            else if(rsi <= 70) m_rsi = 0.8;
-            else m_rsi = 0.5;
-        }
-
-        let m_ma = 1.0;
-        let hasMa =!isNaN(harga_etf) &&!isNaN(ma200) && ma200 > 0;
-        if(hasMa) {
-            let dev = ((harga_etf - ma200) / ma200) * 100;
-            if(dev <= -15) m_ma = 2.0;
-            else if(dev <= -3) m_ma = 1.5;
-            else if(dev < 0) m_ma = 1.2;
-            else if(dev <= 3) m_ma = 1.0;
-            else if(dev <= 6) m_ma = 0.8;
-            else m_ma = 0.5;
-        }
-
-        // Tentukan multiplier ETF final
-        let m_etf = 1.0;
-        if(hasRsi && hasMa) {
-            m_etf = (m_rsi + m_ma) / 2; // Rata-rata jika kedua data ada
-        } else if(hasRsi) {
-            m_etf = m_rsi;
-        } else if(hasMa) {
-            m_etf = m_ma;
-        }
-
-        // 3. Kalkulasi Multiplier BBCA (Berdasarkan Deviasi PBV)
         let m_bbca = 1.0;
         let hasPbv =!isNaN(pbv_kini);
-        if(hasPbv) {
+        if (hasPbv) {
             let d_pbv = pbv_kini / pbv_wajar;
-            if(d_pbv <= 0.70) m_bbca = 1.5;
-            else if(d_pbv <= 0.85) m_bbca = 1.25;
-            else if(d_pbv <= 1.00) m_bbca = 1.0;
+            if (d_pbv <= 0.70) m_bbca = 1.5;
+            else if (d_pbv <= 0.85) m_bbca = 1.25;
+            else if (d_pbv <= 1.00) m_bbca = 1.0;
             else m_bbca = 0.75;
         }
 
         // 4. Kalkulasi Multiplier BTC (Berdasarkan Fear & Greed)
+        const fngVal = document.getElementById('fng').value;
+        const fng = fngVal!== ""? parseFloat(fngVal) : NaN;
+
         let m_btc = 1.0;
         let hasFng =!isNaN(fng);
-        if(hasFng) {
-            if(fng <= 25) m_btc = 1.5;
-            else if(fng <= 45) m_btc = 1.25;
-            else if(fng <= 74) m_btc = 1.0;
+        if (hasFng) {
+            if (fng <= 25) m_btc = 1.5;
+            else if (fng <= 45) m_btc = 1.25;
+            else if (fng <= 74) m_btc = 1.0;
             else m_btc = 0.5;
         }
 
-        // 5. Hitung Nominal Pembelian Akhir (Base x Multiplier)
-        const investVOO = baseVOO * m_etf;
-        const investVGT = baseVGT * m_etf;
-        const investVXUS = baseVXUS * m_etf;
+        // 5. Hitung Nilai Beli Final (Alokasi Dasar x Multiplier Masing-masing)
+        const investVOO = baseVOO * m_voo;
+        const investVGT = baseVGT * m_vgt;
+        const investVXUS = baseVXUS * m_vxus;
         const investBBCA = baseBBCA * m_bbca;
         const investBTC = baseBTC * m_btc;
 
@@ -304,9 +414,9 @@
         const selisih = modal - totalInvest;
 
         // 6. Tampilkan ke Layar
-        document.getElementById('res-voo').innerText = formatRupiah(investVOO) + ` [Multiplier: x${m_etf.toFixed(2)}]`;
-        document.getElementById('res-vgt').innerText = formatRupiah(investVGT) + ` [Multiplier: x${m_etf.toFixed(2)}]`;
-        document.getElementById('res-vxus').innerText = formatRupiah(investVXUS) + ` [Multiplier: x${m_etf.toFixed(2)}]`;
+        document.getElementById('res-voo').innerText = formatRupiah(investVOO) + ` [Multiplier: x${m_voo.toFixed(2)}]`;
+        document.getElementById('res-vgt').innerText = formatRupiah(investVGT) + ` [Multiplier: x${m_vgt.toFixed(2)}]`;
+        document.getElementById('res-vxus').innerText = formatRupiah(investVXUS) + ` [Multiplier: x${m_vxus.toFixed(2)}]`;
         document.getElementById('res-bbca').innerText = formatRupiah(investBBCA) + ` [Multiplier: x${m_bbca.toFixed(2)}]`;
         document.getElementById('res-btc').innerText = formatRupiah(investBTC) + ` [Multiplier: x${m_btc.toFixed(2)}]`;
         document.getElementById('res-total').innerText = formatRupiah(totalInvest);
@@ -314,13 +424,13 @@
         const alertBox = document.getElementById('buffer-alert');
         if (selisih > 0.01) {
             alertBox.className = "buffer-info buffer-save";
-            alertBox.innerText = `💡 Pasar sedang premium (mahal). Masukkan sisa uang sebesar ${formatRupiah(selisih)} ke akun Cash Buffer (RDPU/Tabungan) Anda.`;
+            alertBox.innerText = `💡 Pasar secara rata-rata sedang premium. Simpan sisa modal sebesar ${formatRupiah(selisih)} Anda ke dalam Cash Buffer (RDPU/Tabungan) untuk persiapan diskon berikutnya.`;
         } else if (selisih < -0.01) {
             alertBox.className = "buffer-info buffer-take";
-            alertBox.innerText = `🔥 Pasar sedang diskon besar! Ambil tambahan dana sebesar ${formatRupiah(Math.abs(selisih))} dari akun Cash Buffer Anda untuk membeli aset ekstra.`;
+            alertBox.innerText = `🔥 Ada aset yang diskon besar! Cairkan tambahan dana sebesar ${formatRupiah(Math.abs(selisih))} dari akun Cash Buffer Anda untuk membeli porsi diskon di bursa.`;
         } else {
             alertBox.className = "buffer-info buffer-save";
-            alertBox.innerText = `⚖️ Pasar ekuilibrium (normal). Belanjakan modal pas Rp ${modalRaw} Anda bulan ini secara penuh tanpa sisa.`;
+            alertBox.innerText = `⚖️ Kondisi portofolio ekuilibrium (normal). Belanjakan modal pas Rp ${modalRaw} Anda bulan ini secara penuh tanpa sisa.`;
         }
 
         document.getElementById('result-box').style.display = "block";
