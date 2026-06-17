@@ -596,41 +596,131 @@
     </div>
 
 
-    <div class="container">
-        <h2>Kalkulator Rebalancing Portofolio</h2>
-        <p class="subtitle">VOO (55%) | VGT (15%) | BBCA (15%) | VXUS (10%) | BTC (5%)</p>
+ <div class="container">
+    <h2>Kalkulator Rebalancing & Opportunity Fund</h2>
+    <p class="subtitle">Sinkronisasi Aset & Strategi Akumulasi Diskon</p>
 
-        <div class="info-note warning">
-            ⚠️ <strong>Fungsi Rebalancing:</strong> Gunakan alat ini sekali dalam setahun atau setengah tahun untuk mengembalikan porsi kepemilikan aset Anda ke target ideal yang direncanakan demi meminimalisasi risiko penyimpangan pasar (*portfolio drift*).
+    <div class="info-note warning">
+        ⚠️ <strong>Sistem Deteksi:</strong> Masukkan dana rutin gaji dan saldo dana cadangan (RDPU) Anda. Kalkulator akan memprioritaskan dana gaji, lalu menyarankan penggunaan dana cadangan jika terjadi diskon besar pada aset tertentu.
+    </div>
+
+    <div class="section-title orange">1. Input Nilai Portofolio Saat Ini (Rupiah)</div>
+    <div class="grid-2">
+        <div class="rebalance-group">
+            <label for="val_voo">Nilai VOO Saat Ini</label>
+            <input type="text" id="val_voo" oninput="formatInputThousand(this)" placeholder="0">
+        </div>
+        <div class="rebalance-group">
+            <label for="val_vgt">Nilai VGT Saat Ini</label>
+            <input type="text" id="val_vgt" oninput="formatInputThousand(this)" placeholder="0">
+        </div>
+        <div class="rebalance-group">
+            <label for="val_bbca">Nilai BBCA Saat Ini</label>
+            <input type="text" id="val_bbca" oninput="formatInputThousand(this)" placeholder="0">
+        </div>
+        <div class="rebalance-group">
+            <label for="val_vxus">Nilai VXUS Saat Ini</label>
+            <input type="text" id="val_vxus" oninput="formatInputThousand(this)" placeholder="0">
+        </div>
+        <div class="rebalance-group">
+            <label for="val_btc">Nilai BTC Saat Ini</label>
+            <input type="text" id="val_btc" oninput="formatInputThousand(this)" placeholder="0">
+        </div>
+    </div>
+
+    <div class="section-title orange">2. Input Dana Alokasi</div>
+    <div class="grid-2">
+        <div class="rebalance-group" style="background-color: #e8f8f5;">
+            <label for="val_gaji">Dana Rutin Gaji</label>
+            <input type="text" id="val_gaji" oninput="formatInputThousand(this)" placeholder="Dana rutin bulan ini">
+        </div>
+        <div class="rebalance-group" style="background-color: #fdf2e9;">
+            <label for="val_opp_fund">Opportunity Fund (RDPU)</label>
+            <input type="text" id="val_opp_fund" oninput="formatInputThousand(this)" placeholder="Dana cadangan diskon">
+        </div>
+    </div>
+
+    <button onclick="hitungRebalancing()" class="btn-orange">Analisis Rebalancing & Akumulasi</button>
+
+    <div class="result-box rebalance" id="result-box-rebalance">
+        <div class="summary-card">
+            <h3 style="margin: 0; font-size: 16px;">Total Nilai Portofolio Baru</h3>
+            <p id="rebal-total-value" style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold;">Rp 0</p>
         </div>
 
-        <div class="section-title orange">Input Nilai Portofolio Saat Ini (Rupiah)</div>
-        <div class="grid-2">
-            <div class="rebalance-group">
-                <label for="val_voo">Nilai VOO Saat Ini (Rp)</label>
-                <input type="text" id="val_voo" oninput="formatInputThousand(this)" placeholder="0">
-            </div>
-            <div class="rebalance-group">
-                <label for="val_vgt">Nilai VGT Saat Ini (Rp)</label>
-                <input type="text" id="val_vgt" oninput="formatInputThousand(this)" placeholder="0">
-            </div>
-            <div class="rebalance-group">
-                <label for="val_bbca">Nilai BBCA Saat Ini (Rp)</label>
-                <input type="text" id="val_bbca" oninput="formatInputThousand(this)" placeholder="0">
-            </div>
-            <div class="rebalance-group">
-                <label for="val_vxus">Nilai VXUS Saat Ini (Rp)</label>
-                <input type="text" id="val_vxus" oninput="formatInputThousand(this)" placeholder="0">
-            </div>
-            <div class="rebalance-group">
-                <label for="val_btc">Nilai BTC Saat Ini (Rp)</label>
-                <input type="text" id="val_btc" oninput="formatInputThousand(this)" placeholder="0">
-            </div>
-            <div class="rebalance-group highlight">
-                <label for="val_fresh">Suntikan Dana Baru Opsional (Rp)</label>
-                <input type="text" id="val_fresh" oninput="formatInputThousand(this)" placeholder="Contoh: 5.000.000">
-            </div>
-        </div>
+        <table id="rebal-table">
+            <thead>
+                <tr>
+                    <th>Aset</th>
+                    <th>Nilai Kini</th>
+                    <th>Instruksi Eksekusi</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function hitungRebalancing() {
+        const currentVals = {
+            VOO: getCleanValue('val_voo'),
+            VGT: getCleanValue('val_vgt'),
+            BBCA: getCleanValue('val_bbca'),
+            VXUS: getCleanValue('val_vxus'),
+            BTC: getCleanValue('val_btc')
+        };
+        const gajiRutin = getCleanValue('val_gaji');
+        const oppFund = getCleanValue('val_opp_fund');
+
+        const totalKini = Object.values(currentVals).reduce((a, b) => a + b, 0);
+        const totalBaru = totalKini + gajiRutin + oppFund;
+        const targets = { VOO: 0.55, VGT: 0.15, BBCA: 0.15, VXUS: 0.10, BTC: 0.05 };
+
+        document.getElementById('rebal-total-value').innerText = formatRupiah(totalBaru);
+        const tbody = document.querySelector('#rebal-table tbody');
+        tbody.innerHTML = "";
+
+        let sisaGaji = gajiRutin;
+        let sisaOppFund = oppFund;
+
+        for (const asset in targets) {
+            const valKini = currentVals[asset];
+            const targetVal = totalBaru * targets[asset];
+            const selisih = targetVal - valKini;
+
+            let aksi = "";
+            let aksiClass = "action-ok";
+
+            if (selisih > 1000) {
+                if (selisih <= sisaGaji) {
+                    aksi = `Beli ${formatRupiah(selisih)} (Gaji)`;
+                    sisaGaji -= selisih;
+                    aksiClass = "action-buy";
+                } else if (selisih <= (sisaGaji + sisaOppFund)) {
+                    let ambilGaji = sisaGaji;
+                    let ambilOpp = selisih - sisaGaji;
+                    aksi = `Beli ${formatRupiah(selisih)} (Gaji: ${formatRupiah(ambilGaji)} + OppFund: ${formatRupiah(ambilOpp)})`;
+                    sisaGaji = 0;
+                    sisaOppFund -= ambilOpp;
+                    aksiClass = "action-buy";
+                } else {
+                    aksi = `Beli ${formatRupiah(selisih)} (Dana tidak cukup!)`;
+                    aksiClass = "action-sell";
+                }
+            } else if (selisih < -1000) {
+                aksi = `Jual ${formatRupiah(Math.abs(selisih))}`;
+                aksiClass = "action-sell";
+            } else {
+                aksi = "Sesuai Target";
+            }
+
+            tbody.innerHTML += `<tr><td><strong>${asset}</strong></td><td>${formatRupiah(valKini)}</td><td class="${aksiClass}">${aksi}</td></tr>`;
+        }
+        document.getElementById('result-box-rebalance').style.display = "block";
+    }
+</script>
+
 
         <button onclick="hitungRebalancing()" class="btn-orange">Hitung Deviasi & Rebalancing</button>
 
