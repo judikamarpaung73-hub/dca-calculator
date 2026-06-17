@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Manajemen Portofolio Kuantitatif</title>
+    <title>Sistem Manajemen Portofolio DCA & Rebalancing</title>
     <style>
         :root {
             --primary: #2c3e50;
@@ -22,56 +22,52 @@
             margin: 0;
             padding: 20px;
         }
-       .container {
+        .wrapper {
             max-width: 900px;
             margin: auto;
+        }
+        .container {
             background: #fff;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             margin-bottom: 30px;
         }
-       .section-title {
+        .section-title {
             text-align: center;
             color: var(--primary);
             border-bottom: 2px solid var(--accent);
             padding-bottom: 10px;
-            margin-top: 20px;
+            margin-top: 10px;
             margin-bottom: 20px;
-            font-weight: bold;
         }
-       .subtitle {
+        .subtitle {
             text-align: center;
             color: #7f8c8d;
             font-size: 15px;
             margin-bottom: 25px;
             font-weight: bold;
         }
-       .form-grid {
+        .form-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
-            margin-bottom: 20px;
         }
         @media (min-width: 600px) {
-           .form-grid { grid-template-columns: 1fr 1fr 1fr; }
-           .grid-2 { grid-template-columns: 1fr 1fr; }
+            .form-grid { grid-template-columns: 1fr 1fr 1fr; }
+            .grid-2 { grid-template-columns: 1fr 1fr; }
         }
-       .form-group {
-            background-color: var(--bg-light);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            margin-bottom: 10px;
+        .form-group {
+            margin-bottom: 15px;
         }
-       .asset-card {
+        .asset-card {
             background-color: var(--bg-light);
             padding: 15px;
             border-radius: 8px;
             border: 1px solid #e9ecef;
             margin-bottom: 20px;
         }
-       .asset-card-title {
+        .asset-card-title {
             font-weight: bold;
             color: #2c3e50;
             margin-bottom: 12px;
@@ -82,7 +78,7 @@
             border-bottom: 1px solid #ddd;
             padding-bottom: 8px;
         }
-       .asset-badge {
+        .asset-badge {
             background-color: #e8f4fd;
             color: #2980b9;
             padding: 4px 10px;
@@ -94,14 +90,14 @@
             font-weight: 600;
             margin-bottom: 8px;
             color: var(--secondary);
-            font-size: 14px;
+            font-size: 13px;
         }
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #ced4da;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 15px;
             box-sizing: border-box;
         }
         input:focus, select:focus {
@@ -121,10 +117,10 @@
             transition: opacity 0.3s;
         }
         button:hover { opacity: 0.9; }
-       .btn-dca { background-color: var(--accent); }
-       .btn-rebalance { background-color: var(--warning); }
-        
-       .result-box {
+        .btn-dca { background-color: var(--accent); }
+        .btn-rebalance { background-color: var(--warning); }
+
+        .result-box {
             margin-top: 25px;
             padding: 20px;
             background-color: #f1f8ff;
@@ -132,7 +128,7 @@
             border-radius: 8px;
             display: none;
         }
-       .result-item {
+        .result-item {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
@@ -141,14 +137,14 @@
             padding-bottom: 8px;
             align-items: center;
         }
-       .result-item.bold {
+        .result-item.bold {
             font-weight: bold;
             color: #2c3e50;
             border-bottom: none;
             margin-top: 15px;
             font-size: 18px;
         }
-       .weight-info {
+        .weight-info {
             font-size: 13px;
             color: #7f8c8d;
             font-weight: normal;
@@ -165,69 +161,68 @@
             border-bottom: 1px solid #ddd;
         }
         th { background-color: var(--primary); color: white; }
-       .ref-table th { background-color: var(--secondary); }
-       .ref-table tr:nth-child(even) { background-color: #f9f9f9; }
-        
-       .info-note {
+
+        .info-note {
             font-size: 14px;
-            background-color: #fff3cd;
+            background-color: #e8f4fd;
             padding: 15px;
-            border-left: 5px solid #ffeeba;
+            border-left: 5px solid #3498db;
             border-radius: 5px;
             margin-bottom: 20px;
             line-height: 1.6;
         }
 
         /* Reference Tables Style */
-       .ref-table-grid {
+        .ref-table-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
             margin-top: 15px;
         }
         @media (min-width: 750px) {
-           .ref-table-grid { grid-template-columns: 1fr 1fr; }
+            .ref-table-grid { grid-template-columns: 1fr 1fr; }
         }
-       .ref-card {
+        .ref-card {
             background-color: #fff;
             border: 1px solid #d5d8dc;
             border-radius: 8px;
             padding: 15px;
         }
-       .ref-card h4 {
+        .ref-card h4 {
             margin-top: 0;
             margin-bottom: 10px;
             color: #2c3e50;
             border-left: 4px solid #1abc9c;
             padding-left: 8px;
         }
-       .ref-mini-table {
+        .ref-mini-table {
             width: 100%;
             font-size: 12px;
             margin-top: 5px;
         }
-       .ref-mini-table th,.ref-mini-table td {
+        .ref-mini-table th, .ref-mini-table td {
             padding: 6px 8px;
             border-bottom: 1px solid #f2f4f4;
         }
-       .ref-mini-table th { background-color: #f2f4f4; color: #333; }
+        .ref-mini-table th { background-color: #f2f4f4; color: #333; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
 
+    <!-- ===== KALKULATOR 1: DCA BULANAN ===== -->
     <div class="container">
-        <h2 class="section-title">1. Kalkulator Alokasi DCA Bulanan (Dynamic Sizing)</h2>
+        <h2 class="section-title">Kalkulator Dynamic DCA Bulanan</h2>
         <p class="subtitle">VOO (55%) | VGT (15%) | BBCA (15%) | VXUS (10%) | BTC (5%)</p>
 
         <div class="info-note">
             💡 <strong>Panduan:</strong> Masukkan modal Anda dan lengkapi indikator yang tersedia. Kolom indikator bersifat <strong>opsional</strong> (jika dikosongkan, sistem akan menganggap harga sedang wajar dengan pengali 1.0x).
         </div>
 
-        <div class="form-group" style="background-color: #e8f4fd; border-color: #b8daff; margin-bottom: 25px; padding: 20px; border-radius: 8px; border: 1px solid #b8daff;">
+        <div class="form-group" style="margin-bottom: 25px; border-color: #3498db; background-color: #f0f8ff; padding: 20px; border-radius: 8px; border: 1px solid #b8daff;">
             <label style="font-size: 16px; color: #2c3e50;">Modal Investasi Bulan Ini (Rp) <span style="color: red;">*</span></label>
-            <input type="text" id="dca_modal" oninput="formatRupiahRealtime(this)" placeholder="Contoh: 10.000.000" style="font-weight: bold; color: var(--accent); font-size: 18px; padding: 12px;">
+            <input type="text" id="modal" oninput="formatRupiahRealtime(this)" placeholder="Contoh: 10.000.000" style="padding: 12px; font-size: 18px; font-weight: bold;" required>
         </div>
 
         <div class="asset-card">
@@ -253,7 +248,7 @@
                 <div><label>MA(200) ($)</label><input type="number" step="any" id="ma200_vgt" placeholder="Cth: 101.02"></div>
             </div>
         </div>
-        
+
         <div class="asset-card">
             <div class="asset-card-title">
                 <span>🌍 Vanguard Total Intl ETF (VXUS)</span>
@@ -272,8 +267,8 @@
                     <span>🏦 Bank BCA (BBCA)</span>
                     <span class="asset-badge">Target: 15%</span>
                 </div>
-                <div style="margin-bottom: 10px;"><label>PBV Rata-Rata Wajar</label><input type="number" step="any" id="pbv_bbca_hist" value="4.6"></div>
-                <div><label>PBV Terkini</label><input type="number" step="any" id="pbv_bbca" placeholder="Cth: 3.7"></div>
+                <div style="margin-bottom: 10px;"><label>PBV Rata-Rata Wajar</label><input type="number" step="any" id="pbv_wajar" value="4.6"></div>
+                <div><label>PBV Terkini</label><input type="number" step="any" id="pbv_kini" placeholder="Cth: 3.7"></div>
             </div>
             <div class="asset-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
@@ -281,44 +276,44 @@
                         <span>🪙 Bitcoin (BTC)</span>
                         <span class="asset-badge">Target: 5%</span>
                     </div>
-                    <div><label>Fear & Greed Index (0-100)</label><input type="number" id="fng_btc" placeholder="Cth: 25"></div>
+                    <div><label>Fear &amp; Greed Index (0-100)</label><input type="number" id="fng" placeholder="Cth: 25"></div>
                 </div>
                 <div style="height:60px;"></div>
             </div>
         </div>
 
         <div class="form-group" style="margin-top: 20px;">
-            <label style="font-size: 15px; color: #2c3e50; font-weight: bold;">Pilihan Eksekusi Strategi (Metode Pencairan)</label>
+            <label style="font-size: 15px; color: #2c3e50;">Pilihan Eksekusi Strategi (Metode Pencairan)</label>
             <select id="dca_strategy" style="padding: 12px; font-weight: bold;">
                 <option value="A">Strategi A: Always In (Habiskan 100% Modal, Alokasi Dinamis)</option>
                 <option value="B">Strategi B: Cash Buffer (Beli Sesuai Diskon, Sisanya Ditabung ke RDPU)</option>
             </select>
         </div>
 
-        <button class="btn-dca" onclick="hitungDCA()">Hitung Alokasi DCA Bulan Ini</button>
+        <button onclick="hitungDCA()" class="btn-dca">Hitung Alokasi Pembelian Bulan Ini</button>
 
         <div class="result-box" id="result-box-dca">
-            <h3 style="margin-top:0; color: var(--primary);">Instruksi Pembelian Bulan Ini</h3>
+            <h3 style="margin-top:0; color: #2c3e50;">Instruksi Pembelian Portofolio</h3>
             <p id="dca-status" style="font-weight: bold; font-size: 14px; margin-bottom: 20px;"></p>
-            
+
             <div class="result-item">
-                <div><strong>VOO (Target: 55%)</strong> <br><span class="weight-info" id="real-voo">Realita Alokasi: 55%</span></div> 
+                <div><strong>VOO</strong><br><span class="weight-info" id="weight-voo"></span></div>
                 <span id="res-voo" style="font-weight:bold; color:#2980b9;">Rp 0</span>
             </div>
             <div class="result-item">
-                <div><strong>VGT (Target: 15%)</strong> <br><span class="weight-info" id="real-vgt">Realita Alokasi: 15%</span></div> 
+                <div><strong>VGT</strong><br><span class="weight-info" id="weight-vgt"></span></div>
                 <span id="res-vgt" style="font-weight:bold; color:#2980b9;">Rp 0</span>
             </div>
             <div class="result-item">
-                <div><strong>BBCA (Target: 15%)</strong> <br><span class="weight-info" id="real-bbca">Realita Alokasi: 15%</span></div> 
+                <div><strong>BBCA</strong><br><span class="weight-info" id="weight-bbca"></span></div>
                 <span id="res-bbca" style="font-weight:bold; color:#2980b9;">Rp 0</span>
             </div>
             <div class="result-item">
-                <div><strong>VXUS (Target: 10%)</strong> <br><span class="weight-info" id="real-vxus">Realita Alokasi: 10%</span></div> 
+                <div><strong>VXUS</strong><br><span class="weight-info" id="weight-vxus"></span></div>
                 <span id="res-vxus" style="font-weight:bold; color:#2980b9;">Rp 0</span>
             </div>
             <div class="result-item">
-                <div><strong>BTC (Target: 5%)</strong> <br><span class="weight-info" id="real-btc">Realita Alokasi: 5%</span></div> 
+                <div><strong>BTC</strong><br><span class="weight-info" id="weight-btc"></span></div>
                 <span id="res-btc" style="font-weight:bold; color:#2980b9;">Rp 0</span>
             </div>
             <div class="result-item bold" style="border-top: 2px solid #2980b9; padding-top: 10px;">
@@ -327,8 +322,10 @@
         </div>
     </div>
 
+
+    <!-- ===== TABEL ACUAN MULTIPLIER ===== -->
     <div class="container" style="background-color: #fcfcfc;">
-        <h2 class="section-title" style="border-bottom: 2px solid #95a5a6; color: #7f8c8d; margin-top: 10px;">Matriks Pengganda Alokasi (Reference Tables)</h2>
+        <h2 class="section-title" style="border-bottom: 2px solid #95a5a6; color: #7f8c8d;">Tabel Acuan Multiplier</h2>
         <p class="subtitle" style="margin-bottom: 15px;">Pedoman algoritma sistem dalam menghitung deviasi dan faktor diskon.</p>
 
         <div class="ref-table-grid">
@@ -366,7 +363,7 @@
                 </table>
             </div>
             <div class="ref-card">
-                <h4>4. Crypto Fear & Greed Index (BTC)</h4>
+                <h4>4. Crypto Fear &amp; Greed Index (BTC)</h4>
                 <table class="ref-mini-table">
                     <tr><th>Angka Indeks</th><th>Sentimen</th><th>Multiplier</th></tr>
                     <tr><td>0 - 25</td><td style="color:#27ae60;">Extreme Fear</td><td>1.50x</td></tr>
@@ -378,8 +375,10 @@
         </div>
     </div>
 
+
+    <!-- ===== KALKULATOR 2: REBALANCING TAHUNAN ===== -->
     <div class="container">
-        <h2 class="section-title" style="border-bottom: 2px solid #f39c12; color: #d35400; margin-top: 10px;">2. Kalkulator Rebalancing Portofolio Tahunan</h2>
+        <h2 class="section-title" style="border-bottom: 2px solid #f39c12; color: #d35400;">Kalkulator Rebalancing Tahunan</h2>
         <p class="subtitle">VOO (55%) | VGT (15%) | BBCA (15%) | VXUS (10%) | BTC (5%)</p>
 
         <div class="info-note" style="background-color:#fff3cd; border-color:#f39c12; border-left: 5px solid #f39c12; color: #856404;">
@@ -402,11 +401,11 @@
 
         <div class="result-box" id="result-box-rebalance" style="border-color: #f39c12; background-color: #fffdf5;">
             <h3 style="margin-top:0; color: #d35400;">Tabel Penyesuaian Portofolio</h3>
-            <p>Target Total Nilai Portofolio: <span id="rebal-total" style="font-weight:bold; font-size:18px; color: #d35400;">Rp 0</span></p>
+            <p>Target Total Nilai Portofolio: <span id="rebal-total" style="font-weight:bold; font-size:18px;">Rp 0</span></p>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
-                        <tr style="background-color: #d35400; color: white;">
+                        <tr style="background-color: #d35400;">
                             <th>Aset</th>
                             <th>Porsi Kini</th>
                             <th>Target</th>
@@ -423,13 +422,10 @@
 </div>
 
 <script>
-    // --- FUNGSI HELPER: FORMAT ANGKA ---
+    // --- FUNGSI HELPER: FORMAT ANGKA RUPIAH REAL-TIME ---
     function formatRupiahRealtime(input) {
-        let value = input.value.replace(/\./g, "").replace(/\D/g, "");
-        if (value === "") { 
-            input.value = ""; 
-            return; 
-        }
+        let value = input.value.replace(/\D/g, "");
+        if (value === "") { input.value = ""; return; }
         input.value = new Intl.NumberFormat('id-ID').format(parseInt(value));
     }
 
@@ -441,53 +437,53 @@
 
     function getCleanValue(id) {
         const input = document.getElementById(id);
-        if(!input) return 0;
-        const raw = input.value.replace(/\./g, "");
+        if (!input) return 0;
+        const raw = input.value.replace(/\D/g, "");
         return parseFloat(raw) || 0;
     }
 
     // --- FUNGSI HELPER: KALKULASI MULTIPLIER ETF (RSI + MA200) ---
     function hitungMultiplierETF(rsiId, hargaId, ma200Id) {
-        const rsiVal = document.getElementById(rsiId).value;
+        const rsiVal   = document.getElementById(rsiId).value;
         const priceVal = document.getElementById(hargaId).value;
         const ma200Val = document.getElementById(ma200Id).value;
 
-        const rsi = rsiVal!== ""? parseFloat(rsiVal) : NaN;
-        const price = priceVal!== ""? parseFloat(priceVal) : NaN;
-        const ma200 = ma200Val!== ""? parseFloat(ma200Val) : NaN;
+        const rsi   = rsiVal   !== "" ? parseFloat(rsiVal)   : NaN;
+        const price = priceVal !== "" ? parseFloat(priceVal) : NaN;
+        const ma200 = ma200Val !== "" ? parseFloat(ma200Val) : NaN;
 
-        let m_rsi = 1.0;
-        let hasRsi =!isNaN(rsi);
+        let m_rsi  = 1.0;
+        let hasRsi = !isNaN(rsi);
         if (hasRsi) {
-            if (rsi <= 30) m_rsi = 1.5;
+            if      (rsi <= 30) m_rsi = 1.5;
             else if (rsi <= 45) m_rsi = 1.2;
             else if (rsi <= 60) m_rsi = 1.0;
             else if (rsi <= 70) m_rsi = 0.8;
-            else m_rsi = 0.5;
+            else                m_rsi = 0.5;
         }
 
-        let m_ma = 1.0;
-        let hasMa =!isNaN(price) &&!isNaN(ma200) && ma200 > 0;
+        let m_ma  = 1.0;
+        let hasMa = !isNaN(price) && !isNaN(ma200) && ma200 > 0;
         if (hasMa) {
             let dev = ((price - ma200) / ma200) * 100;
-            if (dev <= -15) m_ma = 2.0;
-            else if (dev <= -3) m_ma = 1.5;
-            else if (dev < 0) m_ma = 1.2;
-            else if (dev <= 3) m_ma = 1.0;
-            else if (dev <= 6) m_ma = 0.8;
-            else m_ma = 0.5;
+            if      (dev <= -15) m_ma = 2.0;
+            else if (dev <=  -3) m_ma = 1.5;
+            else if (dev <    0) m_ma = 1.2;
+            else if (dev <=   3) m_ma = 1.0;
+            else if (dev <=   6) m_ma = 0.8;
+            else                 m_ma = 0.5;
         }
 
         if (hasRsi && hasMa) return (m_rsi + m_ma) / 2;
-        if (hasRsi) return m_rsi;
-        if (hasMa) return m_ma;
-        return 1.0; 
+        if (hasRsi)          return m_rsi;
+        if (hasMa)           return m_ma;
+        return 1.0;
     }
 
 
     // ================== SCRIPT KALKULATOR 1 (DCA BULANAN) ==================
     function hitungDCA() {
-        const modal = getCleanValue('dca_modal');
+        const modal = getCleanValue('modal');
 
         if (modal <= 0) {
             alert("Harap masukkan Modal Investasi terlebih dahulu!");
@@ -496,138 +492,139 @@
 
         const strategy = document.getElementById('dca_strategy').value;
 
-        // 1. Target Persentase Portofolio Asli
+        // 1. Target Persentase Asli Portofolio
         const targetWeights = {
-            voo: 0.55,
-            vgt: 0.15,
+            voo:  0.55,
+            vgt:  0.15,
             bbca: 0.15,
             vxus: 0.10,
-            btc: 0.05
+            btc:  0.05
         };
 
         // 2. Kalkulasi Multiplier dari setiap aset
-        const m_voo = hitungMultiplierETF('rsi_voo', 'harga_voo', 'ma200_voo');
-        const m_vgt = hitungMultiplierETF('rsi_vgt', 'harga_vgt', 'ma200_vgt');
+        const m_voo  = hitungMultiplierETF('rsi_voo',  'harga_voo',  'ma200_voo');
+        const m_vgt  = hitungMultiplierETF('rsi_vgt',  'harga_vgt',  'ma200_vgt');
         const m_vxus = hitungMultiplierETF('rsi_vxus', 'harga_vxus', 'ma200_vxus');
 
         let m_bbca = 1.0;
-        const pbvWajarVal = document.getElementById('pbv_bbca_hist').value;
-        const pbvKiniVal = document.getElementById('pbv_bbca').value;
-        if (pbvKiniVal!== "") {
+        const pbvWajarVal = document.getElementById('pbv_wajar').value;
+        const pbvKiniVal  = document.getElementById('pbv_kini').value;
+        if (pbvKiniVal !== "") {
             let d_pbv = parseFloat(pbvKiniVal) / (parseFloat(pbvWajarVal) || 4.6);
-            if (d_pbv <= 0.70) m_bbca = 1.5;
+            if      (d_pbv <= 0.70) m_bbca = 1.50;
             else if (d_pbv <= 0.85) m_bbca = 1.25;
-            else if (d_pbv <= 1.00) m_bbca = 1.0;
-            else m_bbca = 0.75;
+            else if (d_pbv <= 1.00) m_bbca = 1.00;
+            else                    m_bbca = 0.75;
         }
 
         let m_btc = 1.0;
-        const fngVal = document.getElementById('fng_btc').value;
-        if (fngVal!== "") {
+        const fngVal = document.getElementById('fng').value;
+        if (fngVal !== "") {
             let fng = parseFloat(fngVal);
-            if (fng <= 25) m_btc = 1.5;
+            if      (fng <= 25) m_btc = 1.50;
             else if (fng <= 45) m_btc = 1.25;
-            else if (fng <= 74) m_btc = 1.0;
-            else m_btc = 0.5;
+            else if (fng <= 74) m_btc = 1.00;
+            else                m_btc = 0.50;
         }
 
-        // 3. Menghitung Bobot Mentah
+        // 3. Menghitung Bobot Mentah (Porsi x Faktor Multiplier)
         const rawWeights = {
-            voo: targetWeights.voo * m_voo,
-            vgt: targetWeights.vgt * m_vgt,
+            voo:  targetWeights.voo  * m_voo,
+            vgt:  targetWeights.vgt  * m_vgt,
             bbca: targetWeights.bbca * m_bbca,
             vxus: targetWeights.vxus * m_vxus,
-            btc: targetWeights.btc * m_btc
+            btc:  targetWeights.btc  * m_btc
         };
 
         const totalRawWeight = rawWeights.voo + rawWeights.vgt + rawWeights.bbca + rawWeights.vxus + rawWeights.btc;
 
-        let finalInvest = { voo: 0, vgt: 0, bbca: 0, vxus: 0, btc: 0 };
+        let finalInvest  = { voo: 0, vgt: 0, bbca: 0, vxus: 0, btc: 0 };
         let finalPercent = { voo: 0, vgt: 0, bbca: 0, vxus: 0, btc: 0 };
         let totalInvested = 0;
 
-        // 4. Pembagian berdasarkan Strategi A atau B
+        // 4. Pembagian berdasarkan Pilihan Strategi (A atau B)
         if (strategy === "A") {
-            // Strategi A: Normalisasi 100% modal dipakai semua
-            finalInvest.voo = (rawWeights.voo / totalRawWeight) * modal;
-            finalInvest.vgt = (rawWeights.vgt / totalRawWeight) * modal;
+            // Strategi A: Normalisasi — 100% modal dipakai penuh
+            finalInvest.voo  = (rawWeights.voo  / totalRawWeight) * modal;
+            finalInvest.vgt  = (rawWeights.vgt  / totalRawWeight) * modal;
             finalInvest.bbca = (rawWeights.bbca / totalRawWeight) * modal;
             finalInvest.vxus = (rawWeights.vxus / totalRawWeight) * modal;
-            finalInvest.btc = (rawWeights.btc / totalRawWeight) * modal;
+            finalInvest.btc  = (rawWeights.btc  / totalRawWeight) * modal;
 
-            finalPercent.voo = ((rawWeights.voo / totalRawWeight) * 100).toFixed(1);
-            finalPercent.vgt = ((rawWeights.vgt / totalRawWeight) * 100).toFixed(1);
+            finalPercent.voo  = ((rawWeights.voo  / totalRawWeight) * 100).toFixed(1);
+            finalPercent.vgt  = ((rawWeights.vgt  / totalRawWeight) * 100).toFixed(1);
             finalPercent.bbca = ((rawWeights.bbca / totalRawWeight) * 100).toFixed(1);
             finalPercent.vxus = ((rawWeights.vxus / totalRawWeight) * 100).toFixed(1);
-            finalPercent.btc = ((rawWeights.btc / totalRawWeight) * 100).toFixed(1);
-            
+            finalPercent.btc  = ((rawWeights.btc  / totalRawWeight) * 100).toFixed(1);
+
             totalInvested = modal;
 
             const statusEl = document.getElementById('dca-status');
-            statusEl.innerHTML = `✅ Strategi A (Always In): 100% Modal didistribusikan secara dinamis. Tidak ada sisa uang menganggur.`;
+            statusEl.innerHTML = `✅ Strategi A (Always In): 100% Modal didistribusikan. Tidak ada uang kas tersisa.`;
             statusEl.style.color = "var(--success)";
 
         } else {
-            // Strategi B: Cash Buffer (Absolute Porsi)
-            finalInvest.voo = rawWeights.voo * (modal * targetWeights.voo);
-            finalInvest.vgt = rawWeights.vgt * (modal * targetWeights.vgt);
-            finalInvest.bbca = rawWeights.bbca * (modal * targetWeights.bbca);
-            finalInvest.vxus = rawWeights.vxus * (modal * targetWeights.vxus);
-            finalInvest.btc = rawWeights.btc * (modal * targetWeights.btc);
+            // Strategi B: Cash Buffer — beli secara absolut berdasarkan multiplier
+            finalInvest.voo  = rawWeights.voo  * modal;
+            finalInvest.vgt  = rawWeights.vgt  * modal;
+            finalInvest.bbca = rawWeights.bbca * modal;
+            finalInvest.vxus = rawWeights.vxus * modal;
+            finalInvest.btc  = rawWeights.btc  * modal;
 
-            finalPercent.voo = ((finalInvest.voo / modal) * 100).toFixed(1);
-            finalPercent.vgt = ((finalInvest.vgt / modal) * 100).toFixed(1);
-            finalPercent.bbca = ((finalInvest.bbca / modal) * 100).toFixed(1);
-            finalPercent.vxus = ((finalInvest.vxus / modal) * 100).toFixed(1);
-            finalPercent.btc = ((finalInvest.btc / modal) * 100).toFixed(1);
+            finalPercent.voo  = (rawWeights.voo  * 100).toFixed(1);
+            finalPercent.vgt  = (rawWeights.vgt  * 100).toFixed(1);
+            finalPercent.bbca = (rawWeights.bbca * 100).toFixed(1);
+            finalPercent.vxus = (rawWeights.vxus * 100).toFixed(1);
+            finalPercent.btc  = (rawWeights.btc  * 100).toFixed(1);
 
             totalInvested = finalInvest.voo + finalInvest.vgt + finalInvest.bbca + finalInvest.vxus + finalInvest.btc;
             let buffer = modal - totalInvested;
 
             const statusEl = document.getElementById('dca-status');
             if (buffer > 100) {
-                statusEl.innerHTML = `🛡️ Strategi B (Cash Buffer): Pasar mahal secara agregat. Total belanja: ${formatRupiah(totalInvested)}. Pindahkan sisa uang ${formatRupiah(buffer)} ke Kas RDPU Anda.`;
+                statusEl.innerHTML = `💡 Strategi B: Pasar Sedang Mahal. Total belanja: ${formatRupiah(totalInvested)}. Simpan sisa uang ${formatRupiah(buffer)} ke Kas (RDPU).`;
                 statusEl.style.color = "var(--warning)";
             } else if (buffer < -100) {
-                statusEl.innerHTML = `🔥 Strategi B (Cash Buffer): Pasar diskon besar! Cairkan tambahan dana sebesar ${formatRupiah(Math.abs(buffer))} dari Kas RDPU untuk menutupi aksi beli ekstra.`;
+                statusEl.innerHTML = `🔥 Strategi B: Diskon Besar! Anda perlu menambah ${formatRupiah(Math.abs(buffer))} dari uang Kas (RDPU) Anda.`;
                 statusEl.style.color = "var(--danger)";
             } else {
-                statusEl.innerHTML = `✅ Strategi B (Cash Buffer): Pasar stabil ekuilibrium. Dana dibelanjakan pas mendekati 100%.`;
+                statusEl.innerHTML = `✅ Strategi B: Kondisi ekuilibrium. Modal terpakai secara proporsional mendekati 100%.`;
                 statusEl.style.color = "var(--success)";
             }
         }
 
-        // 5. Render Hasil ke Layar
-        document.getElementById('res-voo').innerText = formatRupiah(finalInvest.voo);
-        document.getElementById('real-voo').innerHTML = `Realita Alokasi: <strong>${finalPercent.voo}%</strong> (Pengali Akhir: x${m_voo.toFixed(2)})`;
+        // 5. Render Output Kalkulator 1
+        document.getElementById('res-voo').innerText  = formatRupiah(finalInvest.voo);
+        document.getElementById('weight-voo').innerHTML = `Target 55% &rarr; Porsi Beli: <strong>${finalPercent.voo}%</strong> (Pengali: x${m_voo.toFixed(2)})`;
 
-        document.getElementById('res-vgt').innerText = formatRupiah(finalInvest.vgt);
-        document.getElementById('real-vgt').innerHTML = `Realita Alokasi: <strong>${finalPercent.vgt}%</strong> (Pengali Akhir: x${m_vgt.toFixed(2)})`;
+        document.getElementById('res-vgt').innerText  = formatRupiah(finalInvest.vgt);
+        document.getElementById('weight-vgt').innerHTML = `Target 15% &rarr; Porsi Beli: <strong>${finalPercent.vgt}%</strong> (Pengali: x${m_vgt.toFixed(2)})`;
 
         document.getElementById('res-bbca').innerText = formatRupiah(finalInvest.bbca);
-        document.getElementById('real-bbca').innerHTML = `Realita Alokasi: <strong>${finalPercent.bbca}%</strong> (Pengali Akhir: x${m_bbca.toFixed(2)})`;
+        document.getElementById('weight-bbca').innerHTML = `Target 15% &rarr; Porsi Beli: <strong>${finalPercent.bbca}%</strong> (Pengali: x${m_bbca.toFixed(2)})`;
 
         document.getElementById('res-vxus').innerText = formatRupiah(finalInvest.vxus);
-        document.getElementById('real-vxus').innerHTML = `Realita Alokasi: <strong>${finalPercent.vxus}%</strong> (Pengali Akhir: x${m_vxus.toFixed(2)})`;
+        document.getElementById('weight-vxus').innerHTML = `Target 10% &rarr; Porsi Beli: <strong>${finalPercent.vxus}%</strong> (Pengali: x${m_vxus.toFixed(2)})`;
 
-        document.getElementById('res-btc').innerText = formatRupiah(finalInvest.btc);
-        document.getElementById('real-btc').innerHTML = `Realita Alokasi: <strong>${finalPercent.btc}%</strong> (Pengali Akhir: x${m_btc.toFixed(2)})`;
+        document.getElementById('res-btc').innerText  = formatRupiah(finalInvest.btc);
+        document.getElementById('weight-btc').innerHTML = `Target 5% &rarr; Porsi Beli: <strong>${finalPercent.btc}%</strong> (Pengali: x${m_btc.toFixed(2)})`;
 
         document.getElementById('res-total').innerText = formatRupiah(totalInvested);
         document.getElementById('result-box-dca').style.display = "block";
     }
 
+
     // ================== SCRIPT KALKULATOR 2 (REBALANCING) ==================
     function hitungRebalancing() {
-        const vooVal = getCleanValue('val_voo');
-        const vgtVal = getCleanValue('val_vgt');
+        const vooVal  = getCleanValue('val_voo');
+        const vgtVal  = getCleanValue('val_vgt');
         const bbcaVal = getCleanValue('val_bbca');
         const vxusVal = getCleanValue('val_vxus');
-        const btcVal = getCleanValue('val_btc');
+        const btcVal  = getCleanValue('val_btc');
         const freshVal = getCleanValue('val_fresh');
 
         const totalKini = vooVal + vgtVal + bbcaVal + vxusVal + btcVal;
-        
+
         if (totalKini <= 0 && freshVal <= 0) {
             alert("Harap masukkan setidaknya satu nilai aset di portofolio Anda!");
             return;
@@ -636,28 +633,34 @@
         const newTotal = totalKini + freshVal;
         document.getElementById('rebal-total').innerText = formatRupiah(newTotal);
 
-        // Pengisian Data Objek yang diperbaiki (VOO 55%, VGT 15%, BBCA 15%, VXUS 10%, BTC 5%)
-        const targetAset =;
+        // ✅ FIX: Array targetAset yang sebelumnya kosong/hilang kini dilengkapi
+        const targetAset = [
+            { nama: "VOO",  targetPct: 0.55, valKini: vooVal  },
+            { nama: "VGT",  targetPct: 0.15, valKini: vgtVal  },
+            { nama: "BBCA", targetPct: 0.15, valKini: bbcaVal },
+            { nama: "VXUS", targetPct: 0.10, valKini: vxusVal },
+            { nama: "BTC",  targetPct: 0.05, valKini: btcVal  }
+        ];
 
         const tbody = document.getElementById('rebalance-table-body');
         tbody.innerHTML = "";
 
         targetAset.forEach(aset => {
-            const porsiKiniPct = totalKini > 0? (aset.valKini / totalKini) * 100 : 0;
+            const porsiKiniPct    = totalKini > 0 ? (aset.valKini / totalKini) * 100 : 0;
             const nilaiTargetIdeal = newTotal * aset.targetPct;
             const selisihRebalance = nilaiTargetIdeal - aset.valKini;
 
-            let aksiText = "";
+            let aksiText  = "";
             let colorStyle = "";
 
             if (selisihRebalance > 100) {
-                aksiText = `+ BELI ${formatRupiah(selisihRebalance)}`;
+                aksiText   = `+ BELI ${formatRupiah(selisihRebalance)}`;
                 colorStyle = "color: #27ae60; font-weight: bold;";
             } else if (selisihRebalance < -100) {
-                aksiText = `- JUAL ${formatRupiah(Math.abs(selisihRebalance))}`;
+                aksiText   = `- JUAL ${formatRupiah(Math.abs(selisihRebalance))}`;
                 colorStyle = "color: #e74c3c; font-weight: bold;";
             } else {
-                aksiText = "✅ SESUAI";
+                aksiText   = "✅ SESUAI";
                 colorStyle = "color: #7f8c8d; font-weight: bold;";
             }
 
