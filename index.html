@@ -13,7 +13,7 @@
             margin: 0;
         }
        .wrapper {
-            max-width: 850px;
+            max-width: 900px;
             margin: auto;
         }
        .container {
@@ -21,7 +21,7 @@
             padding: 25px 35px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            margin-bottom: 35px; /* Memberikan jarak antar alat */
+            margin-bottom: 35px;
         }
         h2 {
             text-align: center;
@@ -99,6 +99,10 @@
        .section-title.orange {
             color: #e67e22;
         }
+       .section-title.gray {
+            color: #7f8c8d;
+            border-bottom: 2px solid #bdc3c7;
+        }
        .asset-card {
             background-color: #fafbfc;
             border: 1px solid #eaeded;
@@ -120,14 +124,6 @@
             padding: 2px 8px;
             border-radius: 4px;
             font-size: 12px;
-        }
-       .target-badge {
-            background-color: #2c3e50;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: normal;
         }
        .info-note {
             font-size: 13px;
@@ -234,6 +230,10 @@
             background-color: #f8f9fa;
             color: #495057;
             font-weight: bold;
+            font-size: 13px;
+        }
+        td {
+            font-size: 14px;
         }
        .action-buy {
             color: #27ae60;
@@ -245,6 +245,43 @@
         }
        .action-ok {
             color: #7f8c8d;
+        }
+        /* Style Tambahan untuk Tabel Acuan Parameter */
+       .ref-table-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        @media (min-width: 750px) {
+           .ref-table-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+       .ref-card {
+            background-color: #fff;
+            border: 1px solid #d5d8dc;
+            border-radius: 8px;
+            padding: 15px;
+        }
+       .ref-card h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            border-left: 4px solid #1abc9c;
+            padding-left: 8px;
+        }
+       .ref-mini-table {
+            width: 100%;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+       .ref-mini-table th,.ref-mini-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #f2f4f4;
+        }
+       .ref-mini-table th {
+            background-color: #f2f4f4;
         }
     </style>
 </head>
@@ -366,17 +403,195 @@
         <button onclick="hitungDCA()" class="btn-blue">Hitung Alokasi Investasi</button>
 
         <div class="result-box" id="result-box-dca">
-            <div class="result-item"><span>VOO (55%):</span> <span id="res-voo">Rp 0</span></div>
-            <div class="result-item"><span>VGT (15%):</span> <span id="res-vgt">Rp 0</span></div>
-            <div class="result-item"><span>VXUS (10%):</span> <span id="res-vxus">Rp 0</span></div>
-            <div class="result-item"><span>BBCA (15%):</span> <span id="res-bbca">Rp 0</span></div>
-            <div class="result-item"><span>BTC (5%):</span> <span id="res-btc">Rp 0</span></div>
+            <div class="result-item">
+                <div><strong>VOO (Target: 55%)</strong> <br><span class="weight-info" id="real-voo">Realita: 55%</span></div> 
+                <span id="res-voo">Rp 0</span>
+            </div>
+            <div class="result-item">
+                <div><strong>VGT (Target: 15%)</strong> <br><span class="weight-info" id="real-vgt">Realita: 15%</span></div> 
+                <span id="res-vgt">Rp 0</span>
+            </div>
+            <div class="result-item">
+                <div><strong>VXUS (Target: 10%)</strong> <br><span class="weight-info" id="real-vxus">Realita: 10%</span></div> 
+                <span id="res-vxus">Rp 0</span>
+            </div>
+            <div class="result-item">
+                <div><strong>BBCA (Target: 15%)</strong> <br><span class="weight-info" id="real-bbca">Realita: 15%</span></div> 
+                <span id="res-bbca">Rp 0</span>
+            </div>
+            <div class="result-item">
+                <div><strong>BTC (Target: 5%)</strong> <br><span class="weight-info" id="real-btc">Realita: 5%</span></div> 
+                <span id="res-btc">Rp 0</span>
+            </div>
             
             <div class="result-item bold" style="border-top: 2px solid #2980b9; padding-top: 10px;">
                 <span>Total Alokasi Pembelian:</span> <span id="res-total">Rp 0</span>
             </div>
             
             <div id="buffer-alert" class="buffer-info"></div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <h2 style="color: #7f8c8d; font-size: 20px;">Tabel Acuan Parameter Multiplier</h2>
+        <p class="subtitle" style="margin-bottom: 15px;">Pedoman matematis yang digunakan sistem untuk mendeteksi harga wajar dan harga diskon.</p>
+
+        <div class="ref-table-grid">
+            <div class="ref-card">
+                <h4>1. Indikator Momentum RSI Mingguan (ETF)</h4>
+                <table class="ref-mini-table">
+                    <thead>
+                        <tr>
+                            <th>RSI Mingguan (14)</th>
+                            <th>Sinyal Valuasi</th>
+                            <th>Multiplier ($M_{RSI}$)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0 - 30</td>
+                            <td style="color:#27ae60; font-weight:bold;">Diskon Ekstrem / Oversold</td>
+                            <td>1.50x (Agresif)</td>
+                        </tr>
+                        <tr>
+                            <td>31 - 45</td>
+                            <td>Terkoreksi Wajar</td>
+                            <td>1.20x</td>
+                        </tr>
+                        <tr>
+                            <td>46 - 60</td>
+                            <td>Normal / Ekuilibrium</td>
+                            <td>1.00x</td>
+                        </tr>
+                        <tr>
+                            <td>61 - 70</td>
+                            <td>Cenderung Mahal</td>
+                            <td>0.80x</td>
+                        </tr>
+                        <tr>
+                            <td>71 - 100</td>
+                            <td style="color:#e74c3c; font-weight:bold;">Sangat Premium / Overbought</td>
+                            <td>0.50x (Defensif)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="ref-card">
+                <h4>2. Deviasi Jarak Harga ke MA(200) (ETF)</h4>
+                <table class="ref-mini-table">
+                    <thead>
+                        <tr>
+                            <th>Deviasi dari MA200</th>
+                            <th>Sinyal Valuasi</th>
+                            <th>Multiplier ($M_{MA}$)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>&le; -15%</td>
+                            <td style="color:#27ae60; font-weight:bold;">Diskon Ekstrem</td>
+                            <td>2.00x (Maksimal)</td>
+                        </tr>
+                        <tr>
+                            <td>-15% s.d -3%</td>
+                            <td>Diskon Moderat</td>
+                            <td>1.50x</td>
+                        </tr>
+                        <tr>
+                            <td>-3% s.d 0%</td>
+                            <td>Koreksi Sehat</td>
+                            <td>1.20x</td>
+                        </tr>
+                        <tr>
+                            <td>0% s.d 3%</td>
+                            <td>Harga Wajar</td>
+                            <td>1.00x</td>
+                        </tr>
+                        <tr>
+                            <td>3% s.d 6%</td>
+                            <td>Premium Ringan</td>
+                            <td>0.80x</td>
+                        </tr>
+                        <tr>
+                            <td>&gt; 6%</td>
+                            <td style="color:#e74c3c; font-weight:bold;">Premium Tinggi</td>
+                            <td>0.50x</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="ref-card">
+                <h4>3. Deviasi Book Value PBV (BBCA)</h4>
+                <table class="ref-mini-table">
+                    <thead>
+                        <tr>
+                            <th>PBV Terkini / PBV Rata-rata (4.6)</th>
+                            <th>Sinyal Valuasi</th>
+                            <th>Multiplier ($M_{BBCA}$)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>&le; 0.70 (PBV &le; 3.2x)</td>
+                            <td style="color:#27ae60; font-weight:bold;">Sangat Murah / Deep Discount</td>
+                            <td>1.50x</td>
+                        </tr>
+                        <tr>
+                            <td>0.71 - 0.85 (PBV 3.3x - 3.9x)</td>
+                            <td>Diskon / Undervalued</td>
+                            <td>1.25x</td>
+                        </tr>
+                        <tr>
+                            <td>0.86 - 1.00 (PBV 4.0x - 4.6x)</td>
+                            <td>Valuasi Wajar / Fair Value</td>
+                            <td>1.00x</td>
+                        </tr>
+                        <tr>
+                            <td>&gt; 1.00 (PBV &gt; 4.6x)</td>
+                            <td style="color:#e74c3c; font-weight:bold;">Valuasi Premium / Overvalued</td>
+                            <td>0.75x</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="ref-card">
+                <h4>4. Crypto Fear & Greed Index (BTC)</h4>
+                <table class="ref-mini-table">
+                    <thead>
+                        <tr>
+                            <th>Nilai Indeks F&G</th>
+                            <th>Psikologi Pasar</th>
+                            <th>Multiplier ($M_{BTC}$)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0 - 25</td>
+                            <td style="color:#27ae60; font-weight:bold;">Extreme Fear</td>
+                            <td>1.50x (Akumulasi Besar)</td>
+                        </tr>
+                        <tr>
+                            <td>26 - 45</td>
+                            <td>Fear (Kecemasan)</td>
+                            <td>1.25x</td>
+                        </tr>
+                        <tr>
+                            <td>46 - 74</td>
+                            <td>Neutral / Greed (Normal)</td>
+                            <td>1.00x</td>
+                        </tr>
+                        <tr>
+                            <td>75 - 100</td>
+                            <td style="color:#e74c3c; font-weight:bold;">Extreme Greed</td>
+                            <td>0.50x (Kurangi Eksposur)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -445,7 +660,7 @@
 </div>
 
 <script>
-    // --- HELPER FUNCTIONS (KONSOLIDASI UNTUK KEDUA KALKULATOR) ---
+    // --- HELPER FUNCTIONS ---
 
     // Memformat input ketikan secara real-time dengan titik ribuan
     function formatInputThousand(input) {
@@ -457,9 +672,11 @@
         input.value = new Intl.NumberFormat('id-ID').format(value);
     }
 
-    // Mengubah format mata uang Rupiah untuk tampilan output
+    // Mengubah format mata uang Rupiah untuk tampilan output (Bulat & Presisi)
     function formatRupiah(angka) {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        if (isNaN(angka) || angka === null) return "Rp 0";
+        const rounded = Math.round(angka);
+        return "Rp " + new Intl.NumberFormat('id-ID').format(rounded);
     }
 
     // Mengambil nilai input numerik bersih (menghilangkan tanda titik pembatas)
@@ -469,7 +686,7 @@
     }
 
 
-    // --- JAVASCRIPT KALKULATOR 1: DYNAMIC DCA (STRATEGI A - ALWAYS IN) ---
+    // --- JAVASCRIPT KALKULATOR 1: DYNAMIC DCA (STRATEGI A - ALWAYS IN / 100%) ---
 
     function hitungMultiplierETF(rsiId, hargaId, ma200Id) {
         const rsiVal = document.getElementById(rsiId).value;
@@ -511,7 +728,7 @@
         } else if (hasMa) {
             return m_ma;
         }
-        return 1.0; // Default jika kosong
+        return 1.0; 
     }
 
     function hitungDCA() {
@@ -553,42 +770,62 @@
             else m_btc = 0.5;
         }
 
-        // 4. Alokasi Dasar Sesuai Persentase Awal (55%, 15%, 15%, 10%, 5%)
-        const baseVOO = modal * 0.55;
-        const baseVGT = modal * 0.15;
-        const baseBBCA = modal * 0.15;
-        const baseVXUS = modal * 0.10;
-        const baseBTC = modal * 0.05;
+        // 4. Target Persentase Dasar
+        const targetWeights = {
+            voo: 0.55,
+            vgt: 0.15,
+            vxus: 0.10,
+            bbca: 0.15,
+            btc: 0.05
+        };
 
-        // 5. Nominal Akhir Setelah Dikali Multiplier masing-masing
-        const investVOO = baseVOO * m_voo;
-        const investVGT = baseVGT * m_vgt;
-        const investVXUS = baseVXUS * m_vxus;
-        const investBBCA = baseBBCA * m_bbca;
-        const investBTC = baseBTC * m_btc;
+        // 5. Hitung Bobot Mentah Tersesuaikan (Raw Weights = Target x Multiplier)
+        const rawWeights = {
+            voo: targetWeights.voo * m_voo,
+            vgt: targetWeights.vgt * m_vgt,
+            vxus: targetWeights.vxus * m_vxus,
+            bbca: targetWeights.bbca * m_bbca,
+            btc: targetWeights.btc * m_btc
+        };
 
-        const totalInvest = investVOO + investVGT + investVXUS + investBBCA + investBTC;
-        const selisih = modal - totalInvest;
+        // Total Bobot Mentah untuk Normalisasi
+        const totalRawWeight = rawWeights.voo + rawWeights.vgt + rawWeights.vxus + rawWeights.bbca + rawWeights.btc;
 
-        // 6. Tampilkan Hasil DCA ke Layar
-        document.getElementById('res-voo').innerText = formatRupiah(investVOO) + ` [Multiplier: x${m_voo.toFixed(2)}]`;
-        document.getElementById('res-vgt').innerText = formatRupiah(investVGT) + ` [Multiplier: x${m_vgt.toFixed(2)}]`;
-        document.getElementById('res-vxus').innerText = formatRupiah(investVXUS) + ` [Multiplier: x${m_vxus.toFixed(2)}]`;
-        document.getElementById('res-bbca').innerText = formatRupiah(investBBCA) + ` [Multiplier: x${m_bbca.toFixed(2)}]`;
-        document.getElementById('res-btc').innerText = formatRupiah(investBTC) + ` [Multiplier: x${m_btc.toFixed(2)}]`;
-        document.getElementById('res-total').innerText = formatRupiah(totalInvest);
+        // 6. Alokasi Akhir Normalisasi (Selalu Pas 100% dari Modal)
+        const investVOO = (rawWeights.voo / totalRawWeight) * modal;
+        const investVGT = (rawWeights.vgt / totalRawWeight) * modal;
+        const investVXUS = (rawWeights.vxus / totalRawWeight) * modal;
+        const investBBCA = (rawWeights.bbca / totalRawWeight) * modal;
+        const investBTC = (rawWeights.btc / totalRawWeight) * modal;
+
+        // Persentase Riil Hasil Pergeseran Alokasi
+        const pctVOO = ((rawWeights.voo / totalRawWeight) * 100).toFixed(1);
+        const pctVGT = ((rawWeights.vgt / totalRawWeight) * 100).toFixed(1);
+        const pctVXUS = ((rawWeights.vxus / totalRawWeight) * 100).toFixed(1);
+        const pctBBCA = ((rawWeights.bbca / totalRawWeight) * 100).toFixed(1);
+        const pctBTC = ((rawWeights.btc / totalRawWeight) * 100).toFixed(1);
+
+        // 7. Tampilkan Hasil Ke Layar dengan Format Titik
+        document.getElementById('res-voo').innerText = formatRupiah(investVOO);
+        document.getElementById('real-voo').innerHTML = `Realita Alokasi: <strong>${pctVOO}%</strong> (Multiplier: x${m_voo.toFixed(2)})`;
+
+        document.getElementById('res-vgt').innerText = formatRupiah(investVGT);
+        document.getElementById('real-vgt').innerHTML = `Realita Alokasi: <strong>${pctVGT}%</strong> (Multiplier: x${m_vgt.toFixed(2)})`;
+
+        document.getElementById('res-vxus').innerText = formatRupiah(investVXUS);
+        document.getElementById('real-vxus').innerHTML = `Realita Alokasi: <strong>${pctVXUS}%</strong> (Multiplier: x${m_vxus.toFixed(2)})`;
+
+        document.getElementById('res-bbca').innerText = formatRupiah(investBBCA);
+        document.getElementById('real-bbca').innerHTML = `Realita Alokasi: <strong>${pctBBCA}%</strong> (Multiplier: x${m_bbca.toFixed(2)})`;
+
+        document.getElementById('res-btc').innerText = formatRupiah(investBTC);
+        document.getElementById('real-btc').innerHTML = `Realita Alokasi: <strong>${pctBTC}%</strong> (Multiplier: x${m_btc.toFixed(2)})`;
+
+        document.getElementById('res-total').innerText = formatRupiah(investVOO + investVGT + investVXUS + investBBCA + investBTC);
 
         const alertBox = document.getElementById('buffer-alert');
-        if (selisih > 0.01) {
-            alertBox.className = "buffer-info buffer-save";
-            alertBox.innerText = `💡 Pasar sedang premium (mahal). Amankan sisa uang sebesar ${formatRupiah(selisih)} ke akun Cash Buffer (RDPU/Tabungan) Anda.`;
-        } else if (selisih < -0.01) {
-            alertBox.className = "buffer-info buffer-take";
-            alertBox.innerText = `🔥 Pasar sedang diskon besar! Cairkan tambahan dana sebesar ${formatRupiah(Math.abs(selisih))} dari akun Cash Buffer Anda untuk maksimalkan pembelian.`;
-        } else {
-            alertBox.className = "buffer-info buffer-save";
-            alertBox.innerText = `⚖️ Pasar ekuilibrium (normal). Seluruh modal sebesar ${formatRupiah(modal)} berhasil dibelanjakan tanpa sisa.`;
-        }
+        alertBox.className = "buffer-info";
+        alertBox.innerHTML = `✅ <strong>100% Modal Dialokasikan Penuh!</strong><br>Logika <i>Always-In</i> sukses menyeimbangkan porsi. Dana Anda otomatis didorong memborong aset diskon, dan memotong porsi aset kemahalan tanpa menyisakan uang menganggur.`;
 
         document.getElementById('result-box-dca').style.display = "block";
     }
@@ -608,20 +845,20 @@
         const totalKini = vooVal + vgtVal + bbcaVal + vxusVal + btcVal;
         
         if (totalKini <= 0 && freshVal <= 0) {
-            alert("Harap masukkan nilai portofolio saat ini atau suntikan dana segar!");
+            alert("Harap masukkan nominal kepemilikan aset saat ini atau suntikan dana segar terlebih dahulu!");
             return;
         }
 
         // Portofolio Baru setelah digabung dana segar
         const totalPortofolioBaru = totalKini + freshVal;
 
-        // Definisi Aset & Target Persentase Lama Anda
+        // Definisi Aset & Target Persentase Portofolio Anda yang Sebenarnya
         const targetAset =;
 
         // Tampilkan total nilai baru
         document.getElementById('rebal-total-value').innerText = formatRupiah(totalPortofolioBaru);
 
-        // Bersihkan body tabel sebelum diisi ulang
+        // Bersihkan tabel sebelum diisi ulang
         const tbody = document.querySelector('#rebal-table tbody');
         tbody.innerHTML = "";
 
@@ -634,13 +871,13 @@
             let aksiText = "";
             let aksiClass = "";
             if (selisihRebalance > 1000) {
-                aksiText = `Beli ${formatRupiah(selisihRebalance)}`;
+                aksiText = `+ Beli ${formatRupiah(selisihRebalance)}`;
                 aksiClass = "action-buy";
             } else if (selisihRebalance < -1000) {
-                aksiText = `Jual ${formatRupiah(Math.abs(selisihRebalance))}`;
+                aksiText = `- Jual ${formatRupiah(Math.abs(selisihRebalance))}`;
                 aksiClass = "action-sell";
             } else {
-                aksiText = "Sesuai Target";
+                aksiText = "✅ Sesuai Target";
                 aksiClass = "action-ok";
             }
 
@@ -651,7 +888,7 @@
                 <td>${porsiKiniPct.toFixed(1)}%</td>
                 <td style="font-weight: 600; color: #2980b9;">${(aset.targetPct * 100)}%</td>
                 <td>${formatRupiah(nilaiTargetIdeal)}</td>
-                <td class="${aksiClass}">${aksiText}</td>
+                <td class="${aksiClass}"><strong>${aksiText}</strong></td>
             `;
             tbody.appendChild(row);
         });
