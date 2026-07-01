@@ -136,6 +136,14 @@
         table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
         th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ecf0f1; }
         th { background-color: #34495e; color: white; }
+
+        .dynamic-us-box {
+            background: #fff;
+            border: 1px solid #bdc3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -162,18 +170,27 @@
             <p style="font-size: 14px; color: #7f8c8d; margin-top: 0;">Pembelian buta (Blind DCA). Multiplier dikunci permanen di 1.0x. Berfungsi sebagai penampung arus kas jika aset lain sedang kemahalan.</p>
         </div>
 
-        <!-- SATELIT AKTIF -->
+        <!-- SATELIT AKTIF: SAHAM US DINAMIS -->
         <div class="asset-card" style="border-left: 5px solid var(--accent);">
             <div class="asset-header">
                 <span>🎯 Saham US Pilihan (Stock Picking)</span>
-                <span class="badge-dynamic">Target Dasar: 20%</span>
+                <span class="badge-dynamic">Target Dasar: 20% (Total)</span>
             </div>
-            <div class="form-grid">
-                <div><label>Harga Wajar Kalkulator (EPV) ($)</label><input type="number" step="any" id="fv_us" placeholder="Cth: 150.50"></div>
-                <div><label>Harga Pasar Saat Ini ($)</label><input type="number" step="any" id="price_us" placeholder="Cth: 120.00"></div>
+            <div style="margin-bottom: 20px;">
+                <label>Jumlah Saham US yang akan dibeli bulan ini:</label>
+                <select id="jumlah_us" onchange="generateUSInputs()" style="width: auto; padding: 8px;">
+                    <option value="1">1 Saham</option>
+                    <option value="2" selected>2 Saham</option>
+                    <option value="3">3 Saham</option>
+                    <option value="4">4 Saham</option>
+                </select>
+            </div>
+            <div id="us-inputs-container">
+                <!-- Form input Saham US akan dirender secara dinamis lewat JS -->
             </div>
         </div>
 
+        <!-- SATELIT AKTIF: IDX -->
         <div class="asset-card" style="border-left: 5px solid var(--accent);">
             <div class="asset-header">
                 <span>🏦 Saham IDX (Contoh: BBCA)</span>
@@ -224,10 +241,10 @@
                 <div><span class="res-title">🇺🇸 VOO (S&P 500)</span><span class="res-desc" id="desc-voo"></span></div>
                 <span class="res-val" id="res-voo">Rp 0</span>
             </div>
-            <div class="result-row">
-                <div><span class="res-title">🎯 Saham US Pilihan</span><span class="res-desc" id="desc-us"></span></div>
-                <span class="res-val" id="res-us">Rp 0</span>
-            </div>
+            
+            <!-- Hasil Saham US akan dirender di sini -->
+            <div id="res-us-container"></div>
+
             <div class="result-row">
                 <div><span class="res-title">🏦 Saham IDX (BBCA)</span><span class="res-desc" id="desc-idx"></span></div>
                 <span class="res-val" id="res-idx">Rp 0</span>
@@ -287,6 +304,9 @@
 </div>
 
 <script>
+    // Membangun input form Saham US secara dinamis saat halaman dimuat
+    document.addEventListener("DOMContentLoaded", generateUSInputs);
+
     function formatRupiahRealtime(input) {
         let value = input.value.replace(/\D/g, "");
         if (value === "") { input.value = ""; return; }
@@ -302,6 +322,30 @@
         return val !== "" ? parseFloat(val) : NaN;
     }
 
+    function generateUSInputs() {
+        const count = parseInt(document.getElementById('jumlah_us').value);
+        const container = document.getElementById('us-inputs-container');
+        container.innerHTML = '';
+        
+        for(let i = 1; i <= count; i++) {
+            container.innerHTML += `
+                <div class="dynamic-us-box">
+                    <strong style="font-size: 14px; color: var(--secondary);">Saham US #${i}</strong>
+                    <div class="form-grid" style="margin-top: 10px;">
+                        <div>
+                            <label>Harga Wajar Kalkulator (EPV) ($)</label>
+                            <input type="number" step="any" id="fv_us_${i}" placeholder="Cth: 150.50">
+                        </div>
+                        <div>
+                            <label>Harga Pasar Saat Ini ($)</label>
+                            <input type="number" step="any" id="price_us_${i}" placeholder="Cth: 120.00">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
     function hitungDCA() {
         const rawModal = document.getElementById('modal').value.replace(/\D/g, "");
         const modal = parseFloat(rawModal) || 0;
@@ -309,22 +353,45 @@
         if (modal <= 0) { alert("Masukkan Total Modal Bulan Ini!"); return; }
 
         // Target Dasar
-        const t_voo = 0.50, t_us = 0.20, t_idx = 0.15, t_gold = 0.10, t_btc = 0.05;
+        const t_voo = 0.50, t_us_total = 0.20, t_idx = 0.15, t_gold = 0.10, t_btc = 0.05;
+        
+        const us_count = parseInt(document.getElementById('jumlah_us').value);
+        const t_us_base = t_us_total / us_count; // Porsi 20% dibagi rata ke jumlah saham US
 
-        // --- KALKULASI MULTIPLIER ---
-        let m_voo = 1.0; // VOO selalu statis
-        let m_us = 1.0, m_idx = 1.0, m_gold = 1.0, m_btc = 1.0;
+        let m_voo = 1.0; 
+        let m_idx = 1.0, m_gold = 1.0, m_btc = 1.0;
 
-        // US Stock (MoS)
-        const fv_us = getVal('fv_us'), price_us = getVal('price_us');
-        if (!isNaN(fv_us) && !isNaN(price_us) && fv_us > 0) {
-            let ratio = price_us / fv_us;
-            if (ratio < 0.80) m_us = 1.50;
-            else if (ratio < 1.0) m_us = 1.25;
-            else if (ratio == 1.0) m_us = 1.0;
-            else m_us = 0.50;
+        // --- KALKULASI MULTIPLIER SAHAM US DINAMIS ---
+        let us_allocations = [];
+        let max_us_m = 0;
+        let max_us_index = -1;
+        let total_us_alloc = 0;
+
+        for(let i = 1; i <= us_count; i++) {
+            let m_us = 1.0;
+            const fv = getVal(`fv_us_${i}`);
+            const price = getVal(`price_us_${i}`);
+
+            if (!isNaN(fv) && !isNaN(price) && fv > 0) {
+                let ratio = price / fv;
+                if (ratio < 0.80) m_us = 1.50;
+                else if (ratio < 1.0) m_us = 1.25;
+                else if (ratio == 1.0) m_us = 1.0;
+                else m_us = 0.50;
+            }
+
+            let alloc = modal * t_us_base * m_us;
+            us_allocations.push({ index: i, m: m_us, alloc: alloc });
+            total_us_alloc += alloc;
+
+            // Mencari Saham US mana yang paling diskon untuk siap menampung Waterfall
+            if(m_us > max_us_m) {
+                max_us_m = m_us;
+                max_us_index = i - 1; 
+            }
         }
 
+        // --- KALKULASI ASET LAIN ---
         // IDX Stock (PBV)
         const pbv_w = getVal('pbv_wajar'), pbv_k = getVal('pbv_kini');
         if (!isNaN(pbv_w) && !isNaN(pbv_k) && pbv_w > 0) {
@@ -338,7 +405,7 @@
         // XAUUSD (ATR Volatility)
         const atr = document.getElementById('atr_gold').value;
         if (atr === 'rendah') m_gold = 1.25;
-        else if (atr === 'tinggi') m_gold = 0.00; // Jangan beli di pucuk kepanikan
+        else if (atr === 'tinggi') m_gold = 0.00; 
 
         // BTC (F&G)
         const fng = getVal('fng_btc');
@@ -346,46 +413,52 @@
             if (fng <= 25) m_btc = 1.50;
             else if (fng <= 45) m_btc = 1.25;
             else if (fng <= 74) m_btc = 1.00;
-            else m_btc = 0.00; // Ekstrem greed, cut pembelian
+            else m_btc = 0.00; 
         }
 
-        // --- ALOKASI AWAL (BERDASARKAN BUDGET) ---
+        // --- ALOKASI AWAL ---
         let alloc = {
             voo: modal * t_voo * m_voo,
-            us: modal * t_us * m_us,
             idx: modal * t_idx * m_idx,
             gold: modal * t_gold * m_gold,
             btc: modal * t_btc * m_btc
         };
 
-        let total_alloc = alloc.voo + alloc.us + alloc.idx + alloc.gold + alloc.btc;
+        let total_alloc = alloc.voo + total_us_alloc + alloc.idx + alloc.gold + alloc.btc;
         let excess_cash = modal - total_alloc;
         let note = "";
 
         // --- WATERFALL LOGIC (ALOKASI SILANG) ---
         if (excess_cash > 0.1) {
-            // Ada uang nganggur (karena ada aset yang mahal / m < 1)
-            // Cari aset satelit dengan diskon terdalam (multiplier terbesar > 1.0)
-            let max_m = Math.max(m_us, m_idx, m_btc);
+            // Cari multiplier absolut tertinggi di seluruh instrumen satelit aktif
+            let max_m_all = Math.max(max_us_m, m_idx, m_btc);
             
-            if (max_m > 1.0) {
-                // Berikan uang sisa ke aset yang paling diskon
-                if (max_m === m_us) { alloc.us += excess_cash; note = "Uang sisa dialihkan untuk menyerok Saham US yang sedang diskon ekstrem."; }
-                else if (max_m === m_idx) { alloc.idx += excess_cash; note = "Uang sisa dialihkan untuk memborong Saham IDX (BBCA) yang sedang murah."; }
-                else if (max_m === m_btc) { alloc.btc += excess_cash; note = "Uang sisa dialihkan untuk serok BTC saat Extreme Fear."; }
+            if (max_m_all > 1.0) {
+                if (max_m_all === max_us_m) { 
+                    us_allocations[max_us_index].alloc += excess_cash; 
+                    note = `Uang sisa dialihkan untuk menyerok Saham US #${us_allocations[max_us_index].index} karena diskonnya paling ekstrem.`; 
+                }
+                else if (max_m_all === m_idx) { 
+                    alloc.idx += excess_cash; 
+                    note = "Uang sisa dialihkan untuk memborong Saham IDX (BBCA) yang sedang murah."; 
+                }
+                else if (max_m_all === m_btc) { 
+                    alloc.btc += excess_cash; 
+                    note = "Uang sisa dialihkan untuk serok BTC saat kondisi Extreme Fear."; 
+                }
             } else {
-                // Tidak ada yang diskon, semua mahal. Sapu bersih ke VOO.
                 alloc.voo += excess_cash;
-                note = "Semua aset aktif sedang mahal. Seluruh uang sisa disapu bersih ke VOO untuk menjaga efek compounding berkelanjutan.";
+                note = "Semua aset aktif sedang mahal (Multiplier <= 1). Seluruh uang sisa disapu bersih ke VOO untuk menjaga compounding.";
             }
         } else if (excess_cash < -0.1) {
-            // Kekurangan modal (karena banyak yang diskon dan minta dibeli)
-            // Lakukan normalisasi proporsional agar sesuai modal
             let factor = modal / total_alloc;
-            alloc.voo *= factor; alloc.us *= factor; alloc.idx *= factor; alloc.gold *= factor; alloc.btc *= factor;
-            note = "Banyak aset sedang diskon bersamaan. Modal didistribusikan secara proporsional sesuai rasio diskonnya.";
+            alloc.voo *= factor; alloc.idx *= factor; alloc.gold *= factor; alloc.btc *= factor;
+            for(let i=0; i<us_count; i++) {
+                us_allocations[i].alloc *= factor;
+            }
+            note = "Banyak aset sedang diskon ekstrem secara bersamaan. Modal didistribusikan mundur secara proporsional.";
         } else {
-            note = "Alokasi berjalan normal sesuai target ekuilibrium.";
+            note = "Alokasi berjalan normal, pasar berada pada kondisi ekuilibrium (wajar).";
         }
 
         // --- RENDER OUTPUT ---
@@ -396,8 +469,22 @@
         document.getElementById('res-voo').innerText = formatRupiah(alloc.voo);
         document.getElementById('desc-voo').innerText = `Porsi Beli: ${pct(alloc.voo)} | Pengali Awal: ${m_voo}x`;
 
-        document.getElementById('res-us').innerText = formatRupiah(alloc.us);
-        document.getElementById('desc-us').innerText = `Porsi Beli: ${pct(alloc.us)} | Pengali Awal: ${m_us}x`;
+        // Render hasil Saham US secara dinamis
+        const resUsContainer = document.getElementById('res-us-container');
+        resUsContainer.innerHTML = '';
+        let total_us_final = 0;
+        for(let i = 0; i < us_count; i++) {
+            total_us_final += us_allocations[i].alloc;
+            resUsContainer.innerHTML += `
+                <div class="result-row">
+                    <div>
+                        <span class="res-title">🎯 Saham US #${us_allocations[i].index}</span>
+                        <span class="res-desc">Porsi Beli: ${pct(us_allocations[i].alloc)} | Pengali Awal: ${us_allocations[i].m}x</span>
+                    </div>
+                    <span class="res-val">${formatRupiah(us_allocations[i].alloc)}</span>
+                </div>
+            `;
+        }
 
         document.getElementById('res-idx').innerText = formatRupiah(alloc.idx);
         document.getElementById('desc-idx').innerText = `Porsi Beli: ${pct(alloc.idx)} | Pengali Awal: ${m_idx}x`;
@@ -408,7 +495,8 @@
         document.getElementById('res-btc').innerText = formatRupiah(alloc.btc);
         document.getElementById('desc-btc').innerText = `Porsi Beli: ${pct(alloc.btc)} | Pengali Awal: ${m_btc}x`;
 
-        document.getElementById('res-total').innerText = formatRupiah(alloc.voo + alloc.us + alloc.idx + alloc.gold + alloc.btc);
+        let final_sum = alloc.voo + total_us_final + alloc.idx + alloc.gold + alloc.btc;
+        document.getElementById('res-total').innerText = formatRupiah(final_sum);
         
         document.getElementById('result-box').style.display = "block";
     }
